@@ -4,14 +4,14 @@ import com.dicio.input_recognition.InputRecognitionUnit;
 
 import java.util.ArrayList;
 
-public class StandardInputRecognitionUnit implements InputRecognitionUnit {
+public class StandardRecognitionUnit implements InputRecognitionUnit {
     final float mPriority;
     ArrayList<String> input;
 
     Sentence[] sentences;
     Sentence bestSentenceSoFar;
 
-    public StandardInputRecognitionUnit(float priority, Sentence[] sentences) {
+    public StandardRecognitionUnit(float priority, Sentence[] sentences) {
         this.mPriority = priority;
         this.input = new ArrayList<>();
         this.sentences = sentences;
