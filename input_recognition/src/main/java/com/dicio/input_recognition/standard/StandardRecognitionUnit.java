@@ -5,17 +5,27 @@ import com.dicio.input_recognition.InputRecognitionUnit;
 import java.util.ArrayList;
 
 public class StandardRecognitionUnit implements InputRecognitionUnit {
-    final Specificity specificity_;
-    ArrayList<String> input;
+    private final Specificity specificity_;
+    private ArrayList<String> input;
 
-    Sentence[] sentences;
-    Sentence bestSentenceSoFar;
+    private Sentence[] sentences;
+    private Sentence bestSentenceSoFar;
+
+
+    /////////////////
+    // Constructor //
+    /////////////////
 
     public StandardRecognitionUnit(Specificity specificity, Sentence[] sentences) {
         this.specificity_ = specificity;
         this.input = new ArrayList<>();
         this.sentences = sentences;
     }
+
+
+    ////////////////////////////////////
+    // InputRecognitionUnit overrides //
+    ////////////////////////////////////
 
     @Override
     public Specificity specificity() {
@@ -45,5 +55,22 @@ public class StandardRecognitionUnit implements InputRecognitionUnit {
         }
 
         return maxScoreSoFar;
+    }
+
+
+    ////////////////////////////////////
+    // Data of the last best sentence //
+    ////////////////////////////////////
+
+    public String getSentenceId() {
+        return bestSentenceSoFar.getSentenceId();
+    }
+
+    public int getNrCapturingGroups() {
+        return bestSentenceSoFar.getNrCapturingGroups();
+    }
+
+    public ArrayList<String> getCapturingGroup(int index) {
+        return bestSentenceSoFar.getCapturingGroup(index);
     }
 }

@@ -8,29 +8,34 @@ public class Sentence {
     private static final float penaltyMissingCapturingGroup = 0.25f;
 
     private final ArrayList<ArrayList<String>> packs;
+    private final String sentenceId;
+
     private ArrayList<ArrayList<String>> capturingGroups = new ArrayList<>();
 
     //////////////////
     // Constructors //
     //////////////////
 
-    public Sentence(final String[] firstPack, final String[] secondPack, final String[] thirdPack) {
-        packs = new ArrayList<ArrayList<String>>() {{
+    public Sentence(String sentenceId, final String[] firstPack, final String[] secondPack, final String[] thirdPack) {
+        this.sentenceId = sentenceId;
+        this.packs = new ArrayList<ArrayList<String>>() {{
                 add(new ArrayList<String>(Arrays.asList(firstPack)));
                 add(new ArrayList<String>(Arrays.asList(secondPack)));
                 add(new ArrayList<String>(Arrays.asList(thirdPack)));
         }};
     }
 
-    public Sentence(final String[] firstPack, final String[] secondPack) {
-        packs = new ArrayList<ArrayList<String>>() {{
+    public Sentence(String sentenceId, final String[] firstPack, final String[] secondPack) {
+        this.sentenceId = sentenceId;
+        this.packs = new ArrayList<ArrayList<String>>() {{
             add(new ArrayList<String>(Arrays.asList(firstPack)));
             add(new ArrayList<String>(Arrays.asList(secondPack)));
         }};
     }
 
-    public Sentence(final String[] firstPack) {
-        packs = new ArrayList<ArrayList<String>>() {{
+    public Sentence(String sentenceId, final String[] firstPack) {
+        this.sentenceId = sentenceId;
+        this.packs = new ArrayList<ArrayList<String>>() {{
             add(new ArrayList<String>(Arrays.asList(firstPack)));
         }};
     }
@@ -224,11 +229,15 @@ public class Sentence {
     // Data //
     //////////
 
-    int nrCapturingGroups() {
+    String getSentenceId() {
+        return sentenceId;
+    }
+
+    int getNrCapturingGroups() {
         return packs.size() - 1;
     }
 
-    ArrayList<String> getCapturingGroup(int i) {
-        return capturingGroups.get(i);
+    ArrayList<String> getCapturingGroup(int index) {
+        return capturingGroups.get(index);
     }
 }

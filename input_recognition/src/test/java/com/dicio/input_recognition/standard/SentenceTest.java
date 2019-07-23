@@ -22,10 +22,20 @@ public class SentenceTest {
         ArrayList<String> splitStr = split(str);
         return splitStr.toArray(new String[0]);
     }
+
+    private Sentence getSentence(String pack1) {
+        return new Sentence("", splitArr(pack1));
+    }
+    private Sentence getSentence(String pack1, String pack2) {
+        return new Sentence("", splitArr(pack1), splitArr(pack2));
+    }
+    private Sentence getSentence(String pack1, String pack2, String pack3) {
+        return new Sentence("", splitArr(pack1), splitArr(pack2), splitArr(pack3));
+    }
     
     private void assertSentence(Sentence s, String input, float a, float b, String captGr0, String captGr1) {
         float score = s.score(split(input));
-        assertEquals((captGr0 != null ? 1 : 0) + (captGr1 != null ? 1 : 0), s.nrCapturingGroups());
+        assertEquals((captGr0 != null ? 1 : 0) + (captGr1 != null ? 1 : 0), s.getNrCapturingGroups());
 
         if (a == b) {
             assertEquals("Score " + score + " is not equal to " + a, a, score, floatEqualsDelta);
@@ -43,6 +53,13 @@ public class SentenceTest {
 
 
 
+    @Test
+    public void testSentenceId() {
+        String sentenceId = "SentenceID";
+        Sentence s = new Sentence(sentenceId, splitArr("hello"));
+
+        assertEquals(s.getSentenceId(), sentenceId);
+    }
 
     @Test
     public void testPartialScoreValues() {
@@ -69,7 +86,7 @@ public class SentenceTest {
 
     @Test
     public void test1p() {
-        Sentence s = new Sentence(new String[] {"hello", "how", "are", "you"});
+        Sentence s = getSentence("hello how are you");
 
         assertSentence(s, "hello how are you",     1.0f, 1.0f, null, null);
         assertSentence(s, "hello how is you",      0.7f, 0.8f, null, null);
@@ -81,7 +98,7 @@ public class SentenceTest {
 
     @Test
     public void test2p() {
-        Sentence s = new Sentence(splitArr("hello"), splitArr("how are you"));
+        Sentence s = getSentence("hello", "how are you");
 
         assertSentence(s, "hello bob how are you",                     1.0f,  1.0f,  "bob",          null);
         assertSentence(s, "hello bob and mary how is you",             0.7f,  0.8f,  "bob and mary", null);
@@ -98,7 +115,7 @@ public class SentenceTest {
 
     @Test
     public void test2pLeftEmpty() {
-        Sentence s = new Sentence(splitArr(""), splitArr("how are you"));
+        Sentence s = getSentence("", "how are you");
 
         assertSentence(s, "hello bob how are you",                     1.0f,  1.0f,  "hello bob",          null);
         assertSentence(s, "hello bob and mary how is you",             0.4f,  0.5f,  "hello bob and mary", null);
@@ -113,7 +130,7 @@ public class SentenceTest {
 
     @Test
     public void test2pRightEmpty() {
-        Sentence s = new Sentence(splitArr("hello"), splitArr(""));
+        Sentence s = getSentence("hello", "");
 
         assertSentence(s, "hello bob",       1.0f,  1.0f,  "bob",          null);
         assertSentence(s, "hi hello bob",    0.3f,  0.4f,  "bob",          null);
@@ -126,7 +143,7 @@ public class SentenceTest {
 
     @Test
     public void test3p() {
-        Sentence s = new Sentence(splitArr("i want"), splitArr("liters of"), splitArr("please"));
+        Sentence s = getSentence("i want", "liters of", "please");
 
         assertSentence(s, "i want five liters of milk please",                1.0f, 1.0f, "five",            "milk");
         assertSentence(s, "i want five and a half liters of soy milk please", 1.0f, 1.0f, "five and a half", "soy milk");
@@ -153,7 +170,7 @@ public class SentenceTest {
 
     @Test
     public void test3pLeftEmpty() {
-        Sentence s = new Sentence(splitArr(""), splitArr("liters of"), splitArr("please"));
+        Sentence s = getSentence("", "liters of", "please");
 
         assertSentence(s, "five liters of milk please",                1.0f,  1.0f,  "five",            "milk");
         assertSentence(s, "five and a half liters of soy milk please", 1.0f,  1.0f,  "five and a half", "soy milk");
@@ -170,7 +187,7 @@ public class SentenceTest {
 
     @Test
     public void test3pRightEmpty() {
-        Sentence s = new Sentence(splitArr("i want"), splitArr("liters of"), splitArr(""));
+        Sentence s = getSentence("i want", "liters of", "");
 
         assertSentence(s, "i want five liters of milk",                1.0f,  1.0f,  "five",            "milk");
         assertSentence(s, "i want five and a half liters of soy milk", 1.0f,  1.0f,  "five and a half", "soy milk");
@@ -190,7 +207,7 @@ public class SentenceTest {
 
     @Test
     public void test3pLeftRightEmpty() {
-        Sentence s = new Sentence(splitArr(""), splitArr("and"), splitArr(""));
+        Sentence s = getSentence("", "and", "");
 
         assertSentence(s, "bob and mary",           1.0f,  1.0f,  "bob",          "mary");
         assertSentence(s, "bob and mary and simon", 1.0f,  1.0f,  "bob and mary", "simon");
