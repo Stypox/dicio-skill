@@ -5,21 +5,21 @@ import com.dicio.input_recognition.InputRecognitionUnit;
 import java.util.ArrayList;
 
 public class StandardRecognitionUnit implements InputRecognitionUnit {
-    final float mPriority;
+    final Specificity specificity_;
     ArrayList<String> input;
 
     Sentence[] sentences;
     Sentence bestSentenceSoFar;
 
-    public StandardRecognitionUnit(float priority, Sentence[] sentences) {
-        this.mPriority = priority;
+    public StandardRecognitionUnit(Specificity specificity, Sentence[] sentences) {
+        this.specificity_ = specificity;
         this.input = new ArrayList<>();
         this.sentences = sentences;
     }
 
     @Override
-    public float priority() {
-        return mPriority;
+    public Specificity specificity() {
+        return this.specificity_;
     }
 
     @Override
