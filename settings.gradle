@@ -1,1 +1,1 @@
-include ':input_recognition'
+include ':assistance_component'
