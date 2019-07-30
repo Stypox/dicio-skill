@@ -3,18 +3,18 @@ package com.dicio.output.views;
 public class Image implements BaseView {
     enum SourceType {
         /**
-         * The provided source is a url
+         * The provided source is a url.
          */
         url,
         
         /**
-         * The provided source is a local file
+         * The provided source is a local file.
          */
         local,
         
         /**
          * The provided source is neither a url nor a local file,
-         * but probably a pointer to a platform-dependent resource
+         * but probably a pointer to a platform-dependent resource.
          */
         other,
     }
@@ -29,7 +29,7 @@ public class Image implements BaseView {
 
 
     /**
-     * Constructs an image to be loaded from the provided source
+     * Constructs an image to be loaded from the provided source.
      *
      * @see SourceType
      * @param imageSource a string representing the source of the image

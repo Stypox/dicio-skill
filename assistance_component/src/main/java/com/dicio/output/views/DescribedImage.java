@@ -1,7 +1,5 @@
 package com.dicio.output.views;
 
-import java.util.Optional;
-
 public class DescribedImage implements BaseView {
     interface OnClickListener {
         void onClick(String imageSource, Image.SourceType imageSourceType, String headerText, String descriptionText);
@@ -15,7 +13,7 @@ public class DescribedImage implements BaseView {
 
 
     /**
-     * Constructs a composite view made of an image with header and description
+     * Constructs a composite view made of an image with header and description.
      *
      * @see Image.SourceType
      * @param imageSource a string representing the source of the image
