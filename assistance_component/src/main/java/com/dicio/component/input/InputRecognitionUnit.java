@@ -1,6 +1,6 @@
-package com.dicio.input_recognition;
+package com.dicio.component.input;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface InputRecognitionUnit {
     enum Specificity {
@@ -22,15 +22,15 @@ public interface InputRecognitionUnit {
      * to be used when {@link #score() score()} is called
      * @param words input to be recognized
      */
-    void setInput(ArrayList<String> words);
+    void setInput(List<String> words);
 
     /**
-     * @return the last input set with {@link #setInput(ArrayList) setInput()}
+     * @return the last input set with {@link #setInput(List) setInput()}
      */
-    ArrayList<String> getInput();
+    List<String> getInput();
 
     /**
-     * The score of the last input set with {@link #setInput(ArrayList) setInput()}
+     * The score of the last input set with {@link #setInput(List) setInput()}
      * for this input recognition unit
      * @return a number in range [0.0, 1.0]
      */

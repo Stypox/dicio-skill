@@ -1,6 +1,6 @@
-package com.dicio.input_recognition.standard;
+package com.dicio.component.input.standard;
 
-import com.dicio.input_recognition.InputRecognitionUnit;
+import com.dicio.component.input.InputRecognitionUnit;
 
 import org.junit.Test;
 

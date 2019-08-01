@@ -1,12 +1,13 @@
-package com.dicio.input_recognition.standard;
+package com.dicio.component.input.standard;
 
-import com.dicio.input_recognition.InputRecognitionUnit;
+import com.dicio.component.input.InputRecognitionUnit;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class StandardRecognitionUnit implements InputRecognitionUnit {
     private final Specificity specificity_;
-    private ArrayList<String> input;
+    private List<String> input;
 
     private Sentence[] sentences;
     private Sentence bestSentenceSoFar;
@@ -33,12 +34,12 @@ public class StandardRecognitionUnit implements InputRecognitionUnit {
     }
 
     @Override
-    public void setInput(ArrayList<String> words) {
+    public void setInput(List<String> words) {
         this.input = words;
     }
 
     @Override
-    public ArrayList<String> getInput() {
+    public List<String> getInput() {
         return this.input;
     }
 
@@ -70,7 +71,7 @@ public class StandardRecognitionUnit implements InputRecognitionUnit {
         return bestSentenceSoFar.getNrCapturingGroups();
     }
 
-    public ArrayList<String> getCapturingGroup(int index) {
+    public List<String> getCapturingGroup(int index) {
         return bestSentenceSoFar.getCapturingGroup(index);
     }
 }

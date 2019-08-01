@@ -1,4 +1,4 @@
-package com.dicio.input_recognition.standard;
+package com.dicio.component.input.standard;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package com.dicio.output.views;
+package com.dicio.component.output.views;
 
 public class DescribedImage implements BaseView {
     interface OnClickListener {

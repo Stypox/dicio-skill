@@ -1,4 +1,4 @@
-package com.dicio.output.views;
+package com.dicio.component.output.views;
 
 public class Description implements BaseView {
     private final String text;

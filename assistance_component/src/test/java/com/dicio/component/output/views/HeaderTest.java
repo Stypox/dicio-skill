@@ -1,4 +1,4 @@
-package com.dicio.output.views;
+package com.dicio.component.output.views;
 
 import org.junit.Test;
 

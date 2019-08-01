@@ -1,4 +1,4 @@
-package com.dicio.output.views;
+package com.dicio.component.output.views;
 
 /**
  * It does not implement {@link BaseView} to prevent list inception.
