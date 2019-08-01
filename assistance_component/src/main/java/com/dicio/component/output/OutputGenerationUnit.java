@@ -12,7 +12,7 @@ import java.util.Optional;
  * Generates graphical and speech output (possibily based on input)
  * @param <IRU> type of corresponding input recognition unit
  */
-public interface OutputGenerationUnit<IRU extends InputRecognitionUnit> {
+public abstract class OutputGenerationUnit<IRU extends InputRecognitionUnit> {
 
     /**
      * Calculates what is needed to generate the output to be
@@ -30,7 +30,7 @@ public interface OutputGenerationUnit<IRU extends InputRecognitionUnit> {
      * @param inputRecognitionUnit the corresponding input recognition unit
      * for this output generator, useful to access input information.
      */
-    void calculateOutput(IRU inputRecognitionUnit);
+    public abstract void calculateOutput(IRU inputRecognitionUnit);
 
     /**
      * Using the info calculated by {@link #calculateOutput(InputRecognitionUnit)},
@@ -45,7 +45,7 @@ public interface OutputGenerationUnit<IRU extends InputRecognitionUnit> {
      * @see com.dicio.component.output.views
      * @return a list of basic views
      */
-    ViewList getGraphicalOutput();
+    public abstract ViewList getGraphicalOutput();
 
     /**
      * Using the info calculated by {@link #calculateOutput(InputRecognitionUnit)},
@@ -60,7 +60,7 @@ public interface OutputGenerationUnit<IRU extends InputRecognitionUnit> {
      *
      * @return input for the TTS engine
      */
-    String getSpeechOutput();
+    public abstract String getSpeechOutput();
 
     /**
      * If the output calculated by {@link #calculateOutput(InputRecognitionUnit)} was
@@ -74,11 +74,14 @@ public interface OutputGenerationUnit<IRU extends InputRecognitionUnit> {
      * value is returned {@link #nextAssistanceComponents()} must not be called.
      * <p>
      * Useful to try to generate the output in different ways and give feedback about
-     * the process.
+     * the process. The method by default returns nothing, override it to set the next
+     * output generation unit.
      *
-     * @return another {@link OutputGenerationUnit}, if needed
+     * @return another {@link OutputGenerationUnit}, if needed.
      */
-    Optional<OutputGenerationUnit> nextOutputGenerator();
+    public Optional<OutputGenerationUnit> nextOutputGenerator() {
+        return Optional.empty();
+    }
 
     /**
      * If the output calculated by {@link #calculateOutput(InputRecognitionUnit)}
@@ -93,13 +96,16 @@ public interface OutputGenerationUnit<IRU extends InputRecognitionUnit> {
      * is more output on the way the next {@link OutputGenerationUnit} should handle user
      * interaction.
      * <p>
-     * Useful when more information is needed to answer the user's original question.
+     * Useful when more information is needed to answer the user's original question. The
+     * method by default returns nothing, override it to set next assistance components.
      * For simple and small assistance components use
      * {@link TieInputOutput TieInputOutput}
      *
      * @see TieInputOutput TieInputOutput
      * @return a list of {@link AssistanceComponent}s, if needed
      */
-    Optional<List<AssistanceComponent>> nextAssistanceComponents();
+    public Optional<List<AssistanceComponent>> nextAssistanceComponents() {
+        return Optional.empty();
+    }
 
 }

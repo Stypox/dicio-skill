@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -37,22 +36,13 @@ public class TieInputOutputTest {
 
                     @Override
                     public ViewList getGraphicalOutput() {
+                        // useless in this test
                         return null;
                     }
 
                     @Override
                     public String getSpeechOutput() {
                         return speechOutput;
-                    }
-
-                    @Override
-                    public Optional<OutputGenerationUnit> nextOutputGenerator() {
-                        return Optional.empty();
-                    }
-
-                    @Override
-                    public Optional<List<AssistanceComponent>> nextAssistanceComponents() {
-                        return Optional.empty();
                     }
                 });
 
@@ -66,6 +56,8 @@ public class TieInputOutputTest {
         assertArrayEquals(inputs2.toArray(), ac.getInput().toArray());
 
         assertEquals(speechOutput, ac.getSpeechOutput());
+        assertFalse(ac.nextOutputGenerator().isPresent());
+        assertFalse(ac.nextAssistanceComponents().isPresent());
     }
 
 }
