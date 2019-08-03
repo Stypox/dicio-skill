@@ -10,7 +10,7 @@ public interface InputRecognizer {
     }
 
     /**
-     * The specificity of this input recognition unit
+     * The specificity of this input recognizer
      * @return {@link Specificity#high high} for specific things (e.g. weather);<br>
      * {@link Specificity#medium medium} for not-too-specific things (e.g. calculator that parses numbers);<br>
      * {@link Specificity#low low} for broad things (e.g. omniscient API);<br>
@@ -18,7 +18,7 @@ public interface InputRecognizer {
     Specificity specificity();
 
     /**
-     * Sets the current input for the recognition unit,
+     * Sets the current input for the recognizer,
      * to be used when {@link #score() score()} is called
      * @param words input to be recognized
      */
@@ -31,7 +31,7 @@ public interface InputRecognizer {
 
     /**
      * The score of the last input set with {@link #setInput(List) setInput()}
-     * for this input recognition unit
+     * for this input recognizer
      * @return a number in range [0.0, 1.0]
      */
     float score();

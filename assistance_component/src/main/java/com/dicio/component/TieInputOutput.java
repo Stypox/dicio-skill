@@ -8,39 +8,39 @@ import java.util.List;
 import java.util.Optional;
 
 public class TieInputOutput<IR extends InputRecognizer> implements AssistanceComponent {
-    private IR inputRecognitionUnit;
+    private IR inputRecognizer;
     private OutputGenerator<IR> outputGenerator;
 
-    TieInputOutput(IR inputRecognitionUnit, OutputGenerator<IR> outputGenerator) {
-        this.inputRecognitionUnit = inputRecognitionUnit;
+    TieInputOutput(IR inputRecognizer, OutputGenerator<IR> outputGenerator) {
+        this.inputRecognizer = inputRecognizer;
         this.outputGenerator = outputGenerator;
     }
 
 
     @Override
     public InputRecognizer.Specificity specificity() {
-        return inputRecognitionUnit.specificity();
+        return inputRecognizer.specificity();
     }
 
     @Override
     public void setInput(List<String> words) {
-        inputRecognitionUnit.setInput(words);
+        inputRecognizer.setInput(words);
     }
 
     @Override
     public List<String> getInput() {
-        return inputRecognitionUnit.getInput();
+        return inputRecognizer.getInput();
     }
 
     @Override
     public float score() {
-        return inputRecognitionUnit.score();
+        return inputRecognizer.score();
     }
 
 
     @Override
     public void calculateOutput() {
-        outputGenerator.calculateOutput(inputRecognitionUnit);
+        outputGenerator.calculateOutput(inputRecognizer);
     }
 
     @Override

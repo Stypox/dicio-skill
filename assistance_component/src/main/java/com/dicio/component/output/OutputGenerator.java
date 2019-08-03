@@ -10,7 +10,7 @@ import java.util.Optional;
 
 /**
  * Generates graphical and speech output (possibily based on input)
- * @param <IR> type of corresponding input recognition unit
+ * @param <IR> type of corresponding input recognizer
  */
 public abstract class OutputGenerator<IR extends InputRecognizer> {
 
@@ -27,10 +27,10 @@ public abstract class OutputGenerator<IR extends InputRecognizer> {
      *
      * @see #getGraphicalOutput()
      * @see #getSpeechOutput()
-     * @param inputRecognitionUnit the corresponding input recognition unit
+     * @param inputRecognizer the corresponding input recognizer
      * for this output generator, useful to access input information.
      */
-    public abstract void calculateOutput(IR inputRecognitionUnit);
+    public abstract void calculateOutput(IR inputRecognizer);
 
     /**
      * Using the info calculated by {@link #calculateOutput(InputRecognizer)},
@@ -75,7 +75,7 @@ public abstract class OutputGenerator<IR extends InputRecognizer> {
      * <p>
      * Useful to try to generate the output in different ways and give feedback about
      * the process. The method by default returns nothing, override it to set the next
-     * output generation unit.
+     * output generator.
      *
      * @return another {@link OutputGenerator}, if needed.
      */

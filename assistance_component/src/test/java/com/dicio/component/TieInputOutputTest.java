@@ -30,8 +30,8 @@ public class TieInputOutputTest {
         AssistanceComponent ac = new TieInputOutput<>(ir,
                 new OutputGenerator<StandardRecognizer>() {
                     @Override
-                    public void calculateOutput(StandardRecognizer inputRecognitionUnit) {
-                        assertArrayEquals(inputs1.toArray(), inputRecognitionUnit.getInput().toArray());
+                    public void calculateOutput(StandardRecognizer inputRecognizer) {
+                        assertArrayEquals(inputs1.toArray(), inputRecognizer.getInput().toArray());
                     }
 
                     @Override
