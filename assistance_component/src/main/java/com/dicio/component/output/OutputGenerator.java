@@ -3,7 +3,7 @@ package com.dicio.component.output;
 import com.dicio.component.AssistanceComponent;
 import com.dicio.component.TieInputOutput;
 import com.dicio.component.input.InputRecognizer;
-import com.dicio.component.output.views.ViewList;
+import com.dicio.component.output.views.BaseView;
 
 import java.util.List;
 import java.util.Optional;
@@ -45,7 +45,7 @@ public abstract class OutputGenerator<IR extends InputRecognizer> {
      * @see com.dicio.component.output.views
      * @return a list of basic views
      */
-    public abstract ViewList getGraphicalOutput();
+    public abstract List<BaseView> getGraphicalOutput();
 
     /**
      * Using the info calculated by {@link #calculateOutput(InputRecognizer)},

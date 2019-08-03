@@ -8,4 +8,4 @@ import com.dicio.component.output.OutputGenerator;
  *
  * @see OutputGenerator
  */
-interface BaseView {}
+public interface BaseView {}

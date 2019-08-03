@@ -2,7 +2,7 @@ package com.dicio.component;
 
 import com.dicio.component.input.InputRecognizer;
 import com.dicio.component.output.OutputGenerator;
-import com.dicio.component.output.views.ViewList;
+import com.dicio.component.output.views.BaseView;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +37,7 @@ public interface AssistanceComponent {
     /**
      * @see OutputGenerator#getGraphicalOutput()
      */
-    ViewList getGraphicalOutput();
+    List<BaseView> getGraphicalOutput();
 
     /**
      * @see OutputGenerator#getSpeechOutput()

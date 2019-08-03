@@ -4,7 +4,7 @@ import com.dicio.component.input.InputRecognizer;
 import com.dicio.component.input.standard.Sentence;
 import com.dicio.component.input.standard.StandardRecognizer;
 import com.dicio.component.output.OutputGenerator;
-import com.dicio.component.output.views.ViewList;
+import com.dicio.component.output.views.BaseView;
 
 import org.junit.Test;
 
@@ -35,7 +35,7 @@ public class TieInputOutputTest {
                     }
 
                     @Override
-                    public ViewList getGraphicalOutput() {
+                    public List<BaseView> getGraphicalOutput() {
                         // useless in this test
                         return null;
                     }

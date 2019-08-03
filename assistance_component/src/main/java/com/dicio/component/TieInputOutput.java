@@ -2,7 +2,7 @@ package com.dicio.component;
 
 import com.dicio.component.input.InputRecognizer;
 import com.dicio.component.output.OutputGenerator;
-import com.dicio.component.output.views.ViewList;
+import com.dicio.component.output.views.BaseView;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +44,7 @@ public class TieInputOutput<IR extends InputRecognizer> implements AssistanceCom
     }
 
     @Override
-    public ViewList getGraphicalOutput() {
+    public List<BaseView> getGraphicalOutput() {
         return outputGenerator.getGraphicalOutput();
     }
 
