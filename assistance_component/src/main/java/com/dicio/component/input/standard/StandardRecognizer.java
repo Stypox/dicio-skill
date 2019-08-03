@@ -1,11 +1,11 @@
 package com.dicio.component.input.standard;
 
-import com.dicio.component.input.InputRecognitionUnit;
+import com.dicio.component.input.InputRecognizer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StandardRecognitionUnit implements InputRecognitionUnit {
+public class StandardRecognizer implements InputRecognizer {
     private final Specificity specificity_;
     private List<String> input;
 
@@ -17,16 +17,16 @@ public class StandardRecognitionUnit implements InputRecognitionUnit {
     // Constructor //
     /////////////////
 
-    public StandardRecognitionUnit(Specificity specificity, Sentence[] sentences) {
+    public StandardRecognizer(Specificity specificity, Sentence[] sentences) {
         this.specificity_ = specificity;
         this.input = new ArrayList<>();
         this.sentences = sentences;
     }
 
 
-    ////////////////////////////////////
-    // InputRecognitionUnit overrides //
-    ////////////////////////////////////
+    ///////////////////////////////
+    // InputRecognizer overrides //
+    ///////////////////////////////
 
     @Override
     public Specificity specificity() {

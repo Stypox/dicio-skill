@@ -1,9 +1,9 @@
 package com.dicio.component;
 
-import com.dicio.component.input.InputRecognitionUnit;
+import com.dicio.component.input.InputRecognizer;
 import com.dicio.component.input.standard.Sentence;
-import com.dicio.component.input.standard.StandardRecognitionUnit;
-import com.dicio.component.output.OutputGenerationUnit;
+import com.dicio.component.input.standard.StandardRecognizer;
+import com.dicio.component.output.OutputGenerator;
 import com.dicio.component.output.views.ViewList;
 
 import org.junit.Test;
@@ -26,11 +26,11 @@ public class TieInputOutputTest {
         final String speechOutput = "yes";
 
 
-        StandardRecognitionUnit iru = new StandardRecognitionUnit(InputRecognitionUnit.Specificity.medium, new Sentence[]{});
-        AssistanceComponent ac = new TieInputOutput<>(iru,
-                new OutputGenerationUnit<StandardRecognitionUnit>() {
+        StandardRecognizer ir = new StandardRecognizer(InputRecognizer.Specificity.medium, new Sentence[]{});
+        AssistanceComponent ac = new TieInputOutput<>(ir,
+                new OutputGenerator<StandardRecognizer>() {
                     @Override
-                    public void calculateOutput(StandardRecognitionUnit inputRecognitionUnit) {
+                    public void calculateOutput(StandardRecognizer inputRecognitionUnit) {
                         assertArrayEquals(inputs1.toArray(), inputRecognitionUnit.getInput().toArray());
                     }
 
@@ -49,10 +49,10 @@ public class TieInputOutputTest {
 
         ac.setInput(inputs1);
         assertArrayEquals(inputs1.toArray(), ac.getInput().toArray());
-        assertArrayEquals(inputs1.toArray(), iru.getInput().toArray());
+        assertArrayEquals(inputs1.toArray(), ir.getInput().toArray());
         ac.calculateOutput();
 
-        iru.setInput(inputs2);
+        ir.setInput(inputs2);
         assertArrayEquals(inputs2.toArray(), ac.getInput().toArray());
 
         assertEquals(speechOutput, ac.getSpeechOutput());

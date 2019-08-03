@@ -1,24 +1,24 @@
 package com.dicio.component;
 
-import com.dicio.component.input.InputRecognitionUnit;
-import com.dicio.component.output.OutputGenerationUnit;
+import com.dicio.component.input.InputRecognizer;
+import com.dicio.component.output.OutputGenerator;
 import com.dicio.component.output.views.ViewList;
 
 import java.util.List;
 import java.util.Optional;
 
-public class TieInputOutput<IRU extends InputRecognitionUnit> implements AssistanceComponent {
-    private IRU inputRecognitionUnit;
-    private OutputGenerationUnit<IRU> outputGenerationUnit;
+public class TieInputOutput<IR extends InputRecognizer> implements AssistanceComponent {
+    private IR inputRecognitionUnit;
+    private OutputGenerator<IR> outputGenerator;
 
-    TieInputOutput(IRU inputRecognitionUnit, OutputGenerationUnit<IRU> outputGenerationUnit) {
+    TieInputOutput(IR inputRecognitionUnit, OutputGenerator<IR> outputGenerator) {
         this.inputRecognitionUnit = inputRecognitionUnit;
-        this.outputGenerationUnit = outputGenerationUnit;
+        this.outputGenerator = outputGenerator;
     }
 
 
     @Override
-    public InputRecognitionUnit.Specificity specificity() {
+    public InputRecognizer.Specificity specificity() {
         return inputRecognitionUnit.specificity();
     }
 
@@ -40,26 +40,26 @@ public class TieInputOutput<IRU extends InputRecognitionUnit> implements Assista
 
     @Override
     public void calculateOutput() {
-        outputGenerationUnit.calculateOutput(inputRecognitionUnit);
+        outputGenerator.calculateOutput(inputRecognitionUnit);
     }
 
     @Override
     public ViewList getGraphicalOutput() {
-        return outputGenerationUnit.getGraphicalOutput();
+        return outputGenerator.getGraphicalOutput();
     }
 
     @Override
     public String getSpeechOutput() {
-        return outputGenerationUnit.getSpeechOutput();
+        return outputGenerator.getSpeechOutput();
     }
 
     @Override
-    public Optional<OutputGenerationUnit> nextOutputGenerator() {
-        return outputGenerationUnit.nextOutputGenerator();
+    public Optional<OutputGenerator> nextOutputGenerator() {
+        return outputGenerator.nextOutputGenerator();
     }
 
     @Override
     public Optional<List<AssistanceComponent>> nextAssistanceComponents() {
-        return outputGenerationUnit.nextAssistanceComponents();
+        return outputGenerator.nextAssistanceComponents();
     }
 }

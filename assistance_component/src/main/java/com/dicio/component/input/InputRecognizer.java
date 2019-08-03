@@ -2,7 +2,7 @@ package com.dicio.component.input;
 
 import java.util.List;
 
-public interface InputRecognitionUnit {
+public interface InputRecognizer {
     enum Specificity {
         high,
         medium,

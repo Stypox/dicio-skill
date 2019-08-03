@@ -1,7 +1,7 @@
 package com.dicio.component;
 
-import com.dicio.component.output.OutputGenerationUnit;
-import com.dicio.component.input.InputRecognitionUnit;
+import com.dicio.component.input.InputRecognizer;
+import com.dicio.component.output.OutputGenerator;
 import com.dicio.component.output.views.ViewList;
 
 import java.util.List;
@@ -9,48 +9,48 @@ import java.util.Optional;
 
 public interface AssistanceComponent {
     /**
-     * @see InputRecognitionUnit#specificity()
+     * @see InputRecognizer#specificity()
      */
-    InputRecognitionUnit.Specificity specificity();
+    InputRecognizer.Specificity specificity();
 
     /**
-     * @see InputRecognitionUnit#setInput(List<String>)
+     * @see InputRecognizer#setInput(List<String>)
      */
     void setInput(List<String> words);
 
     /**
-     * @see InputRecognitionUnit#getInput()
+     * @see InputRecognizer#getInput()
      */
     List<String> getInput();
 
     /**
-     * @see InputRecognitionUnit#score()
+     * @see InputRecognizer#score()
      */
     float score();
 
 
     /**
-     * @see OutputGenerationUnit#calculateOutput(InputRecognitionUnit)
+     * @see OutputGenerator#calculateOutput(InputRecognizer)
      */
     void calculateOutput();
 
     /**
-     * @see OutputGenerationUnit#getGraphicalOutput()
+     * @see OutputGenerator#getGraphicalOutput()
      */
     ViewList getGraphicalOutput();
 
     /**
-     * @see OutputGenerationUnit#getSpeechOutput()
+     * @see OutputGenerator#getSpeechOutput()
      */
     String getSpeechOutput();
 
     /**
-     * @see OutputGenerationUnit#nextOutputGenerator()
+     * @see OutputGenerator#nextOutputGenerator()
      */
-    Optional<OutputGenerationUnit> nextOutputGenerator();
+    Optional<OutputGenerator> nextOutputGenerator();
 
     /**
-     * @see OutputGenerationUnit#nextAssistanceComponents()
+     * @see OutputGenerator#nextAssistanceComponents()
      */
     Optional<List<AssistanceComponent>> nextAssistanceComponents();
 }
