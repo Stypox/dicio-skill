@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Sentence {
     private static final float penaltyMissingCapturingGroup = 0.25f;
+    private static int maxSkippableWords = 3;
 
     private final ArrayList<ArrayList<String>> packs;
     private final String sentenceId;
@@ -66,7 +67,7 @@ public class Sentence {
         for(; expectedIdx != expectedSize && actualIdx != actualSize; ++expectedIdx) {
             int foundWordOffset = actual.subList(actualIdx, actualSize).indexOf(expected.get(expectedIdx));
             
-            if (foundWordOffset != -1) {
+            if (foundWordOffset != -1 && foundWordOffset < maxSkippableWords) {
                 ++nrFoundWords;
                 actualIdx += foundWordOffset + 1;
             }
@@ -83,7 +84,7 @@ public class Sentence {
         for(; expectedIdx != -1 && actualIdx != -1; --expectedIdx) {
             int foundWordIdx = actual.subList(0, actualIdx+1).lastIndexOf(expected.get(expectedIdx));
 
-            if (foundWordIdx != -1) {
+            if (foundWordIdx != -1 && foundWordIdx >= actualIdx - maxSkippableWords) {
                 ++nrFoundWords;
                 actualIdx = foundWordIdx - 1;
             }

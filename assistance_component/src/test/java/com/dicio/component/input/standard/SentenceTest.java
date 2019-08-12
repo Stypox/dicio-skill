@@ -100,17 +100,19 @@ public class SentenceTest {
     public void test2p() {
         Sentence s = getSentence("hello", "how are you");
 
-        assertSentence(s, "hello bob how are you",                     1.0f,  1.0f,  "bob",          null);
-        assertSentence(s, "hello bob and mary how is you",             0.7f,  0.8f,  "bob and mary", null);
-        assertSentence(s, "hello mary how are steaks inside you",      0.8f,  0.9f,  "mary",         null);
-        assertSentence(s, "hello bob how are steaks doing inside you", 0.6f,  0.7f,  "bob",          null);
-        assertSentence(s, "hi hello bob how are not you",              0.6f,  0.7f,  "bob" ,         null);
-        assertSentence(s, "hi hello mary and bob how are not you",     0.6f,  0.7f,  "mary and bob", null);
-        assertSentence(s, "hello mary",                                0.5f,  0.5f,  "mary",         null);
-        assertSentence(s, "bob how are you",                           0.5f,  0.5f,  "bob",          null);
-        assertSentence(s, "mary and bob",                              0.0f,  0.0f,  "mary and bob", null);
-        assertSentence(s, "hello how are you",                         0.75f, 0.75f, "",             null);
-        assertSentence(s, "",                                          0.0f,  0.0f,  "",             null);
+        assertSentence(s, "hello bob how are you",                     1.0f,  1.0f,  "bob",             null);
+        assertSentence(s, "hello bob and mary how is you",             0.7f,  0.8f,  "bob and mary",    null);
+        assertSentence(s, "hello mary how are steaks inside you",      0.8f,  0.9f,  "mary",            null);
+        assertSentence(s, "hello bob how are steaks doing inside you", 0.6f,  0.7f,  "bob",             null);
+        assertSentence(s, "hi hello bob how are not you",              0.6f,  0.7f,  "bob" ,            null);
+        assertSentence(s, "hi hello mary and bob how are not you",     0.6f,  0.7f,  "mary and bob",    null);
+        assertSentence(s, "hello mary",                                0.5f,  0.5f,  "mary",            null);
+        assertSentence(s, "bob how are you",                           0.5f,  0.5f,  "bob",             null);
+        assertSentence(s, "mary and bob",                              0.0f,  0.0f,  "mary and bob",    null);
+        assertSentence(s, "hello how are you",                         0.75f, 0.75f, "",                null);
+        assertSentence(s, "",                                          0.0f,  0.0f,  "",                null);
+        assertSentence(s, "a a a a hello b how are you",               0.5f,  0.6f,  "a a a a hello b", null);
+        assertSentence(s, "hello b how a a a a are you",               0.7f,  0.8f,  "b how a a a a",   null);
     }
 
     @Test
@@ -166,6 +168,8 @@ public class SentenceTest {
         assertSentence(s, "one soy milk",                                     0.0f, 0.0f, "one soy",         "milk");
         assertSentence(s, "milk",                                             0.0f, 0.0f, "milk",            "");
         assertSentence(s, "",                                                 0.0f, 0.0f, "",                "");
+        assertSentence(s, "i a a a a want f liters of milk please",           0.7f, 0.8f, "a a a a want f",  "milk");
+        assertSentence(s, "i want five liters of m please a a a a",           0.6f, 0.7f, "five",            "m please a a a a");
     }
 
     @Test
@@ -215,5 +219,15 @@ public class SentenceTest {
         assertSentence(s, "and mary",               0.75f, 0.75f, "",             "mary");
         assertSentence(s, "bob and",                0.75f, 0.75f, "bob",          "");
         assertSentence(s, "",                       0.0f,  0.0f,  "",             "");
+    }
+
+
+    @Test
+    public void testDuplicateWord() {
+        Sentence s = getSentence("how do you do bob");
+
+        assertSentence(s, "how do you do bob", 1.0f, 1.0f, null, null);
+        assertSentence(s, "how does you do bob", 0.2f, 0.3f, null, null);
+        assertSentence(s, "how does a you do bob", 0.6f, 0.7f, null, null);
     }
 }
