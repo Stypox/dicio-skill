@@ -41,6 +41,19 @@ public class Sentence {
     }
 
 
+    ////////////////////
+    // Mean functions //
+    ////////////////////
+
+    static float mean(float x, float y) {
+        return (x+y) / 2;
+    }
+
+    static float mean(float x, float y, float z) {
+        return (x+y+z) / 3;
+    }
+
+
     ///////////
     // Score //
     ///////////
@@ -172,7 +185,7 @@ public class Sentence {
                     scoreRight.usedWordsOffset += scoreLeft.onePastLastUsedIdx();
 
                     capturingGroups.add(new ArrayList<>(words.subList(scoreLeft.onePastLastUsedIdx(), scoreRight.firstUsedIdx())));
-                    score = (scoreLeft.score() + scoreRight.score()) / 2;
+                    score = mean(scoreLeft.score(), scoreRight.score());
                 }
 
                 score = penalizeIfMissingCapturingGroup(capturingGroups.get(0).isEmpty(), score);
@@ -192,7 +205,7 @@ public class Sentence {
 
                     capturingGroups.add(new ArrayList<>(words.subList(0, scoreCenter.firstUsedIdx())));
                     capturingGroups.add(new ArrayList<>(words.subList(scoreCenter.onePastLastUsedIdx(), scoreRight.firstUsedIdx())));
-                    score = (scoreRight.score() + scoreCenter.score()) / 2;
+                    score = mean(scoreRight.score(), scoreCenter.score());
 
                 } else if (packs.get(2).isEmpty()) {
                     PartialScoreResult scoreLeft = scoreFromLeft(packs.get(0), words);
@@ -201,7 +214,7 @@ public class Sentence {
 
                     capturingGroups.add(new ArrayList<>(words.subList(scoreLeft.onePastLastUsedIdx(), scoreCenter.firstUsedIdx())));
                     capturingGroups.add(new ArrayList<>(words.subList(scoreCenter.onePastLastUsedIdx(), actualSize)));
-                    score = (scoreLeft.score() + scoreCenter.score()) / 2;
+                    score = mean(scoreLeft.score(), scoreCenter.score());
 
                 } else {
                     PartialScoreResult scoreLeft = scoreFromLeft(packs.get(0), words);
@@ -212,7 +225,7 @@ public class Sentence {
 
                     capturingGroups.add(new ArrayList<>(words.subList(scoreLeft.onePastLastUsedIdx(), scoreCenter.firstUsedIdx())));
                     capturingGroups.add(new ArrayList<>(words.subList(scoreCenter.onePastLastUsedIdx(), scoreRight.firstUsedIdx())));
-                    score = (scoreLeft.score() + scoreCenter.score() + scoreRight.score()) / 3;
+                    score = mean(scoreLeft.score(), scoreCenter.score(), scoreRight.score());
 
                 }
 
