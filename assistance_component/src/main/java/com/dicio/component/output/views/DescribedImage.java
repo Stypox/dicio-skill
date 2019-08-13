@@ -65,7 +65,7 @@ public class DescribedImage implements BaseView {
      * @see OnClickListener
      * @param onClickListener lambda to be called on click
      */
-    void setOnClickListener(OnClickListener onClickListener) {
+    public void setOnClickListener(OnClickListener onClickListener) {
         this.onClickListener = onClickListener;
     }
 

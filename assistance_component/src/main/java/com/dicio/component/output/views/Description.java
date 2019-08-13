@@ -8,7 +8,7 @@ public class Description implements BaseView {
      * than the one in {@link Header}.
      * @param htmlText text to display, basic html is allowed
      */
-    Description(String htmlText) {
+    public Description(String htmlText) {
         this.text = htmlText;
     }
 

@@ -8,7 +8,7 @@ public class Header implements BaseView {
      * displayed text is bigger than the one in {@link Description}.
      * @param plainText text to display, html is not allowed
      */
-    Header(String plainText) {
+    public Header(String plainText) {
         this.text = plainText;
     }
 

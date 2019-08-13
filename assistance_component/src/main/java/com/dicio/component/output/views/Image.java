@@ -35,7 +35,7 @@ public class Image implements BaseView {
      * @param imageSource a string representing the source of the image
      * @param sourceType the type of the image source
      */
-    Image(String imageSource, SourceType sourceType) {
+    public Image(String imageSource, SourceType sourceType) {
         this.imageSource = imageSource;
         this.sourceType = sourceType;
         this.onClickListener = null;
@@ -64,7 +64,7 @@ public class Image implements BaseView {
      * @see OnClickListener
      * @param onClickListener lambda to be called on click
      */
-    void setOnClickListener(OnClickListener onClickListener) {
+    public void setOnClickListener(OnClickListener onClickListener) {
         this.onClickListener = onClickListener;
     }
 
