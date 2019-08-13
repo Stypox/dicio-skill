@@ -1,7 +1,7 @@
 package com.dicio.component.output.views;
 
 public class Image implements BaseView {
-    enum SourceType {
+    public enum SourceType {
         /**
          * The provided source is a url.
          */
@@ -18,8 +18,8 @@ public class Image implements BaseView {
          */
         other,
     }
-    
-    interface OnClickListener {
+
+    public interface OnClickListener {
         void onClick(String imageSource, SourceType sourceType);
     }
 

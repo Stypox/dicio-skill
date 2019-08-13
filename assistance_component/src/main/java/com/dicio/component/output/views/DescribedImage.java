@@ -1,7 +1,7 @@
 package com.dicio.component.output.views;
 
 public class DescribedImage implements BaseView {
-    interface OnClickListener {
+    public interface OnClickListener {
         void onClick(String imageSource, Image.SourceType imageSourceType, String headerText, String descriptionText);
     }
 
