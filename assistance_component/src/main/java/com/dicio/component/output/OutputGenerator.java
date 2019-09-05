@@ -16,7 +16,7 @@ public abstract class OutputGenerator<IR extends InputRecognizer> {
 
     /**
      * Calculates what is needed to generate the output to be
-     * displayed or spoken.
+     * displayed or spoken. Throws an exception on unrecoverable error.
      * <p>
      * In the process of generating output, it has to be called before
      * any other function in {@link OutputGenerator}, since it calculates
@@ -30,7 +30,7 @@ public abstract class OutputGenerator<IR extends InputRecognizer> {
      * @param inputRecognizer the corresponding input recognizer
      * for this output generator, useful to access input information.
      */
-    public abstract void calculateOutput(IR inputRecognizer);
+    public abstract void calculateOutput(IR inputRecognizer) throws Throwable;
 
     /**
      * Using the info calculated by {@link #calculateOutput(InputRecognizer)},

@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 
 public class TieInputOutputTest {
     @Test
-    public void testTieIsCorrect() {
+    public void testTieIsCorrect() throws Throwable {
         final List<String> inputs1 = new ArrayList<String>() {{
             add("hello");
             add("guys");

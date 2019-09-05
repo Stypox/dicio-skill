@@ -32,7 +32,7 @@ public interface AssistanceComponent {
     /**
      * @see OutputGenerator#calculateOutput(InputRecognizer)
      */
-    void calculateOutput();
+    void calculateOutput() throws Throwable;
 
     /**
      * @see OutputGenerator#getGraphicalOutput()

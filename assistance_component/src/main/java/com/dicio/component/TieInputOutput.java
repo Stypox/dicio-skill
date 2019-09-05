@@ -39,7 +39,7 @@ public class TieInputOutput<IR extends InputRecognizer> implements AssistanceCom
 
 
     @Override
-    public void calculateOutput() {
+    public void calculateOutput() throws Throwable {
         outputGenerator.calculateOutput(inputRecognizer);
     }
 
