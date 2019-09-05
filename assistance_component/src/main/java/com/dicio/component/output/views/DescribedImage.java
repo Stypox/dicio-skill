@@ -2,13 +2,14 @@ package com.dicio.component.output.views;
 
 public class DescribedImage implements BaseView {
     public interface OnClickListener {
-        void onClick(String imageSource, Image.SourceType imageSourceType, String headerText, String descriptionText);
+        void onClick(String imageSource, Image.SourceType imageSourceType, String headerText, String descriptionText, boolean descriptionIsHtmlEnabled);
     }
 
     private final String imageSource;
     private final Image.SourceType imageSourceType;
     private final String headerText;
     private final String descriptionText;
+    private final boolean descriptionIsHtmlEnabled;
     private OnClickListener onClickListener;
 
 
@@ -21,11 +22,12 @@ public class DescribedImage implements BaseView {
      * @param headerText text to display in the header, html is not allowed
      * @param descriptionText text to display in the description, html is allowed
      */
-    public DescribedImage(String imageSource, Image.SourceType imageSourceType, String headerText, String descriptionText) {
+    public DescribedImage(String imageSource, Image.SourceType imageSourceType, String headerText, String descriptionText, boolean descriptionIsHtmlEnabled) {
         this.imageSource = imageSource;
         this.imageSourceType = imageSourceType;
         this.headerText = headerText;
         this.descriptionText = descriptionText;
+        this.descriptionIsHtmlEnabled = descriptionIsHtmlEnabled;
         this.onClickListener = null;
     }
 
@@ -52,10 +54,18 @@ public class DescribedImage implements BaseView {
     }
 
     /**
-     * @return html text to be displayed in the description
+     * @return text to be displayed in the description
      */
     public String getDescriptionText() {
         return descriptionText;
+    }
+
+    /**
+     * @return {@code true} if the text in the description should
+     * be treated as plain text, {@code false} otherwise.
+     */
+    public boolean getDescriptionIsHtmlEnabled() {
+        return descriptionIsHtmlEnabled;
     }
 
 
@@ -77,7 +87,7 @@ public class DescribedImage implements BaseView {
      */
     public void onClick() {
         if (onClickListener != null) {
-            onClickListener.onClick(imageSource, imageSourceType, headerText, descriptionText);
+            onClickListener.onClick(imageSource, imageSourceType, headerText, descriptionText, descriptionIsHtmlEnabled);
         }
     }
 }

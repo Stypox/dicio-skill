@@ -9,7 +9,10 @@ public class DescriptionTest {
     @Test
     public void testConstructorAndGetters() {
         final String text = "desc";
-        Description description = new Description(text);
+        final boolean html = true;
+
+        Description description = new Description(text, html);
         assertEquals(text, description.getText());
+        assertEquals(html, description.getIsHtmlEnabled());
     }
 }
