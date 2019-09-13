@@ -1,6 +1,5 @@
 package com.dicio.component.output;
 
-import com.dicio.component.input.InputRecognizer;
 import com.dicio.component.output.views.BaseView;
 
 import org.junit.Test;
@@ -13,7 +12,7 @@ public class OutputGeneratorTest {
     @Test
     public void testDefaultFunctions() {
         OutputGenerator og = new OutputGenerator() {
-            public void calculateOutput(InputRecognizer inputRecognizer) { /* ignore */ }
+            public void calculateOutput() { /* ignore */ }
             public List<BaseView> getGraphicalOutput() { /* ignore */ return null; }
             public String getSpeechOutput() { /* ignore */ return null; }
         };
