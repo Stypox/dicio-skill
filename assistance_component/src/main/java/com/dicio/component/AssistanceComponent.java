@@ -2,55 +2,12 @@ package com.dicio.component;
 
 import com.dicio.component.input.InputRecognizer;
 import com.dicio.component.output.OutputGenerator;
-import com.dicio.component.output.views.BaseView;
 
-import java.util.List;
-import java.util.Optional;
-
-public interface AssistanceComponent {
-    /**
-     * @see InputRecognizer#specificity()
-     */
-    InputRecognizer.Specificity specificity();
-
-    /**
-     * @see InputRecognizer#setInput(List<String>)
-     */
-    void setInput(List<String> words);
-
-    /**
-     * @see InputRecognizer#getInput()
-     */
-    List<String> getInput();
-
-    /**
-     * @see InputRecognizer#score()
-     */
-    float score();
-
-
-    /**
-     * @see OutputGenerator#calculateOutput(InputRecognizer)
-     */
-    void calculateOutput() throws Throwable;
-
-    /**
-     * @see OutputGenerator#getGraphicalOutput()
-     */
-    List<BaseView> getGraphicalOutput();
-
-    /**
-     * @see OutputGenerator#getSpeechOutput()
-     */
-    String getSpeechOutput();
-
-    /**
-     * @see OutputGenerator#nextOutputGenerator()
-     */
-    Optional<OutputGenerator> nextOutputGenerator();
-
-    /**
-     * @see OutputGenerator#nextAssistanceComponents()
-     */
-    Optional<List<AssistanceComponent>> nextAssistanceComponents();
-}
+/**
+ * An {@link AssistanceComponent} processes input and
+ * provides a corresponding output. This class serves the
+ * only purpose of tying together the {@link InputRecognizer}
+ * and {@link OutputGenerator} interfaces, but any class
+ * implementing both should be considered a component.
+ */
+public abstract class AssistanceComponent implements InputRecognizer, OutputGenerator {}

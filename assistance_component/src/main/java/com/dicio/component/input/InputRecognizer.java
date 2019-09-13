@@ -2,6 +2,9 @@ package com.dicio.component.input;
 
 import java.util.List;
 
+/**
+ * Recognizes input by giving a score to it.
+ */
 public interface InputRecognizer {
     enum Specificity {
         high,
