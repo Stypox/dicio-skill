@@ -16,7 +16,7 @@ Every view in the graphical output can be one of:
 - `DescribedImage`: an item that contains a **header** and a **description** on one side of the screen and an **image** on the other, similarly to contact views in messaging apps. Useful to provide search results with an image, display contacts...
 
 ## Assistance component
-The `AssistanceComponent` interface is responsible for both input and output. It has basically the merged functionalities of the **input recognizer** and of the **output generator**. The `TieInputOutput` class is useful to create an assistance component from an `InputRecognizer` and an `OutputGenerator`.
+The `AssistanceComponent` interface is responsible for both input and output. It has basically the merged functionalities of the **input recognizer** and of the **output generator**. Thanks to Java flexibility with class extension, the input recognition and the output generation can be split into two classes. For example a main component class could extend (`StandardRecognizer`)[#standard-input-recognizer] and implement `AssistanceComponent`, so that it only has to override the output generation methods.
 
 ## Standard input recognizer
 The `StandardRecognizer` class implements `InputRecognizer` by providing a simple way to calculate the fitness score based on a list of sentences to match. E.g. `what is the weather` matches: itself with maximum score; `what is the weather like` with high score; `what is he doing` with low score; `how are you` with minimum score.  
