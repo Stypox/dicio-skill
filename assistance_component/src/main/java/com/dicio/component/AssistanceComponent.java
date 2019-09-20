@@ -10,4 +10,4 @@ import com.dicio.component.output.OutputGenerator;
  * and {@link OutputGenerator} interfaces, but any class
  * implementing both should be considered a component.
  */
-public abstract class AssistanceComponent implements InputRecognizer, OutputGenerator {}
+public interface AssistanceComponent extends InputRecognizer, OutputGenerator {}
