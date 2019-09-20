@@ -12,7 +12,7 @@ public class StandardRecognizerTest {
 
     @Test
     public void testSpecificity() {
-        StandardRecognizer sr = new StandardRecognizer(InputRecognizer.Specificity.high, new Sentence[]{});
+        StandardRecognizer sr = new StandardRecognizer(new StandardRecognizerData(InputRecognizer.Specificity.high, new Sentence[]{}));
         assertEquals(InputRecognizer.Specificity.high, sr.specificity());
     }
 

@@ -6,10 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StandardRecognizer implements InputRecognizer {
-    private final Specificity specificity_;
+    private StandardRecognizerData data;
     private List<String> input;
-
-    private Sentence[] sentences;
     private Sentence bestSentenceSoFar;
 
 
@@ -17,10 +15,13 @@ public class StandardRecognizer implements InputRecognizer {
     // Constructor //
     /////////////////
 
-    public StandardRecognizer(Specificity specificity, Sentence[] sentences) {
-        this.specificity_ = specificity;
+    public StandardRecognizer(StandardRecognizerData data) {
+        this.data = data;
         this.input = new ArrayList<>();
-        this.sentences = sentences;
+    }
+
+    public StandardRecognizer(InputRecognizer.Specificity specificity, Sentence[] sentences) {
+        this(new StandardRecognizerData(specificity, sentences));
     }
 
 
@@ -30,7 +31,7 @@ public class StandardRecognizer implements InputRecognizer {
 
     @Override
     public Specificity specificity() {
-        return this.specificity_;
+        return data.getSpecificity();
     }
 
     @Override
@@ -47,7 +48,7 @@ public class StandardRecognizer implements InputRecognizer {
     public float score() {
         float maxScoreSoFar = 0;
 
-        for (Sentence sentence : sentences) {
+        for (Sentence sentence : data.getSentences()) {
             float currentScore = sentence.score(this.input);
             if (currentScore > maxScoreSoFar) {
                 maxScoreSoFar = currentScore;
