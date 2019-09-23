@@ -15,7 +15,7 @@ public interface OutputGenerator {
      * Calculates what is needed to generate the output to be
      * displayed or spoken. Throws an exception on unrecoverable error.
      * <p>
-     * In the process of generating output, it has to be called before
+     * In the process of generating output, it will be called before
      * any other function in {@link OutputGenerator}, since it calculates
      * what's needed for the other functions.
      * <p>
@@ -25,13 +25,13 @@ public interface OutputGenerator {
      * @see #getGraphicalOutput()
      * @see #getSpeechOutput()
      */
-    void calculateOutput() throws Throwable;
+    default void calculateOutput() throws Throwable {};
 
     /**
      * Using the info calculated by {@link #calculateOutput()},
      * generates a graphical output.
      * <p>
-     * In the process of generating output, it has to be called after
+     * In the process of generating output, it will be called after
      * {@link #calculateOutput()} but before {@link #nextOutputGenerator()}
      * and {@link #nextAssistanceComponents()}, otherwise the output would
      * probably be ignored. It makes no sense to proceed before giving some
@@ -47,7 +47,7 @@ public interface OutputGenerator {
      * generates a speech output, which is going to be handled by
      * a text-to-speech engine
      * <p>
-     * In the process of generating output, it has to be called after
+     * In the process of generating output, it will be called after
      * {@link #calculateOutput()} but before {@link #nextOutputGenerator()}
      * and {@link #nextAssistanceComponents()}, otherwise the output would
      * probably be ignored. It makes no sense to proceed before giving some
@@ -61,12 +61,12 @@ public interface OutputGenerator {
      * If the output calculated by {@link #calculateOutput()} was
      * partial, returns another {@link OutputGenerator}.
      * <p>
-     * In the process of generating output, it has to be called after
+     * In the process of generating output, it will be called after
      * {@link #calculateOutput()}, {@link #getGraphicalOutput()} and
      * {@link #getSpeechOutput()} but before {@link #nextAssistanceComponents()},
      * because if there is more output on the way the next
      * {@link OutputGenerator} should handle user interaction. So if a value is
-     * returned {@link #nextAssistanceComponents()} must not be called.
+     * returned {@link #nextAssistanceComponents()} will not be called.
      * <p>
      * Useful to try to generate the output in different ways and give feedback
      * about the process. The method by default returns nothing, override it to
@@ -84,9 +84,9 @@ public interface OutputGenerator {
      * {@link AssistanceComponent}s to handle the answer and
      * generate more output.
      * <p>
-     * In the process of generating output, it has to be called after
+     * In the process of generating output, it will be called after
      * {@link #calculateOutput()}, {@link #getGraphicalOutput()} and
-     * {@link #getSpeechOutput()} and {@link #nextOutputGenerator()}. It must
+     * {@link #getSpeechOutput()} and {@link #nextOutputGenerator()}. It will
      * not be called if {@link #nextOutputGenerator()} returned a value, because
      * if there is more output on the way the next {@link OutputGenerator}
      * should handle user interaction.
