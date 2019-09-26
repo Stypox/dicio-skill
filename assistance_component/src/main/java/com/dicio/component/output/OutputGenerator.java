@@ -25,7 +25,7 @@ public interface OutputGenerator {
      * @see #getGraphicalOutput()
      * @see #getSpeechOutput()
      */
-    default void calculateOutput() throws Throwable {};
+    default void calculateOutput() throws Exception {}
 
     /**
      * Using the info calculated by {@link #calculateOutput()},
