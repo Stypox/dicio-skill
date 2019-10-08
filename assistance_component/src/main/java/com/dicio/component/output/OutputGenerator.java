@@ -14,6 +14,7 @@ public interface OutputGenerator {
     /**
      * Calculates what is needed to generate the output to be
      * displayed or spoken. Throws an exception on unrecoverable error.
+     * Thrown exceptions <b>should not contain sensitive data</b>.
      * <p>
      * In the process of generating output, it will be called before
      * any other function in {@link OutputGenerator}, since it calculates
