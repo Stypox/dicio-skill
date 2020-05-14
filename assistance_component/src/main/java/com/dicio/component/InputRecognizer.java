@@ -1,11 +1,11 @@
-package com.dicio.component.input;
+package com.dicio.component;
 
 import java.util.List;
 
 /**
  * Recognizes input by giving a score to it.
  */
-public interface InputRecognizer {
+public interface InputRecognizer<ResultType> {
     enum Specificity {
         high,
         medium,
@@ -28,14 +28,16 @@ public interface InputRecognizer {
     void setInput(List<String> words);
 
     /**
-     * @return the last input set with {@link #setInput(List) setInput()}
-     */
-    List<String> getInput();
-
-    /**
-     * The score of the last input set with {@link #setInput(List) setInput()}
+     * The score of the input previously set with {@link #setInput(List) setInput()}
      * for this input recognizer
      * @return a number in range [0.0, 1.0]
      */
     float score();
+
+    /**
+     * If this input recognizer has the highest score, this function is called to generate a result
+     * based on the input previously set with {@link #setInput(List) setInput()}
+     * @return a result useful for the next step of the computation
+     */
+    ResultType getResult();
 }

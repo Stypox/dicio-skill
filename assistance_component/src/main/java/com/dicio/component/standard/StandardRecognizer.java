@@ -1,11 +1,11 @@
-package com.dicio.component.input.standard;
+package com.dicio.component.standard;
 
-import com.dicio.component.input.InputRecognizer;
+import com.dicio.component.InputRecognizer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StandardRecognizer implements InputRecognizer {
+public class StandardRecognizer implements InputRecognizer<Sentence> {
     private StandardRecognizerData data;
     private List<String> input;
     private Sentence bestSentenceSoFar;
@@ -40,11 +40,6 @@ public class StandardRecognizer implements InputRecognizer {
     }
 
     @Override
-    public List<String> getInput() {
-        return this.input;
-    }
-
-    @Override
     public float score() {
         float maxScoreSoFar = 0;
 
@@ -59,20 +54,8 @@ public class StandardRecognizer implements InputRecognizer {
         return maxScoreSoFar;
     }
 
-
-    ////////////////////////////////////
-    // Data of the last best sentence //
-    ////////////////////////////////////
-
-    public String getSentenceId() {
-        return bestSentenceSoFar.getSentenceId();
-    }
-
-    public int getNrCapturingGroups() {
-        return bestSentenceSoFar.getNrCapturingGroups();
-    }
-
-    public List<String> getCapturingGroup(int index) {
-        return bestSentenceSoFar.getCapturingGroup(index);
+    @Override
+    public Sentence getResult() {
+        return bestSentenceSoFar;
     }
 }

@@ -1,4 +1,4 @@
-package com.dicio.component.input.standard;
+package com.dicio.component.standard;
 
 class PartialScoreResult {
     final int nrFoundWords, nrExpectedWords;

@@ -1,4 +1,4 @@
-package com.dicio.component.input.standard;
+package com.dicio.component.standard;
 
 import org.junit.Test;
 

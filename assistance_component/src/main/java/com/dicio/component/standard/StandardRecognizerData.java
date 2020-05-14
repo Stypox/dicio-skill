@@ -1,6 +1,6 @@
-package com.dicio.component.input.standard;
+package com.dicio.component.standard;
 
-import com.dicio.component.input.InputRecognizer;
+import com.dicio.component.InputRecognizer;
 
 public class StandardRecognizerData {
     private final InputRecognizer.Specificity specificity;

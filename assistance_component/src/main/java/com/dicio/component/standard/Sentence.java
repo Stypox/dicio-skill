@@ -1,4 +1,4 @@
-package com.dicio.component.input.standard;
+package com.dicio.component.standard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,11 +46,11 @@ public class Sentence {
     // Mean functions //
     ////////////////////
 
-    static float mean(float x, float y) {
+    private static float mean(float x, float y) {
         return (x+y) / 2;
     }
 
-    static float mean(float x, float y, float z) {
+    private static float mean(float x, float y, float z) {
         return (x+y+z) / 3;
     }
 
@@ -94,7 +94,7 @@ public class Sentence {
     }
 
 
-    static int centralIndexOf(List<String> words, String word) {
+    private static int centralIndexOf(List<String> words, String word) {
         final int wordsSize = words.size(), center = wordsSize/2;
 
         int idxFoundLeft = words.subList(0, center).lastIndexOf(word),
@@ -116,7 +116,7 @@ public class Sentence {
         }
     }
 
-    static PartialScoreResult scoreCenter(List<String> expected, List<String> actual) {
+    private static PartialScoreResult scoreCenter(List<String> expected, List<String> actual) {
         final int expectedSize = expected.size(), actualSize = actual.size();
         int expectedToLeftIdx = (expectedSize-1)/2, expectedToRightIdx = expectedToLeftIdx+1;
         int actualCentralIdx = -1;
