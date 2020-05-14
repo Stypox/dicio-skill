@@ -3,7 +3,11 @@ package com.dicio.component;
 import java.util.List;
 
 /**
- * Recognizes input by giving a score to it.
+ * Recognizes input by giving a score to it, and is able to extract data from the provided input.
+ * Even though everything computation step could be done here, it is better to keep things separate,
+ * so that {@link InputRecognizer}'s only purpose is to collect information from user input. Use
+ * {@link IntermediateProcessor} for input-unrelated intermediate steps.
+ * @param <ResultType> the type of the data extracted from the input
  */
 public interface InputRecognizer<ResultType> {
     enum Specificity {
