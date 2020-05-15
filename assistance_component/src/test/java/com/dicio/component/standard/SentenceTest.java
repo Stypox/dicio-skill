@@ -35,7 +35,8 @@ public class SentenceTest {
     
     private void assertSentence(Sentence s, String input, float a, float b, String captGr0, String captGr1) {
         float score = s.score(split(input));
-        assertEquals((captGr0 != null ? 1 : 0) + (captGr1 != null ? 1 : 0), s.getNrCapturingGroups());
+        StandardResult r = s.toStandardResult();
+        assertEquals((captGr0 != null ? 1 : 0) + (captGr1 != null ? 1 : 0), r.getCapturingGroups().size());
 
         if (a == b) {
             assertEquals("Score " + score + " is not equal to " + a, a, score, floatEqualsDelta);
@@ -44,10 +45,10 @@ public class SentenceTest {
         }
 
         if (captGr0 != null) {
-            assertArrayEquals(splitArr(captGr0), s.getCapturingGroup(0).toArray());
+            assertArrayEquals(splitArr(captGr0), r.getCapturingGroups().get(0).toArray());
         }
         if (captGr1 != null) {
-            assertArrayEquals(splitArr(captGr1), s.getCapturingGroup(1).toArray());
+            assertArrayEquals(splitArr(captGr1), r.getCapturingGroups().get(1).toArray());
         }
     }
 
@@ -57,8 +58,9 @@ public class SentenceTest {
     public void testSentenceId() {
         String sentenceId = "SentenceID";
         Sentence s = new Sentence(sentenceId, splitArr("hello"));
+        StandardResult r = s.toStandardResult();
 
-        assertEquals(s.getSentenceId(), sentenceId);
+        assertEquals(sentenceId, r.getSentenceId());
     }
 
     @Test

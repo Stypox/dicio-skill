@@ -5,7 +5,7 @@ import com.dicio.component.InputRecognizer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StandardRecognizer implements InputRecognizer<Sentence> {
+public class StandardRecognizer implements InputRecognizer<StandardResult> {
     private StandardRecognizerData data;
     private List<String> input;
     private Sentence bestSentenceSoFar;
@@ -55,7 +55,7 @@ public class StandardRecognizer implements InputRecognizer<Sentence> {
     }
 
     @Override
-    public Sentence getResult() {
-        return bestSentenceSoFar;
+    public StandardResult getResult() {
+        return bestSentenceSoFar.toStandardResult();
     }
 }

@@ -11,7 +11,7 @@ public class Sentence {
     private final ArrayList<ArrayList<String>> packs;
     private final String sentenceId;
 
-    private ArrayList<ArrayList<String>> capturingGroups = new ArrayList<>();
+    private List<List<String>> capturingGroups = new ArrayList<>();
 
     //////////////////
     // Constructors //
@@ -243,15 +243,7 @@ public class Sentence {
     // Data //
     //////////
 
-    String getSentenceId() {
-        return sentenceId;
-    }
-
-    int getNrCapturingGroups() {
-        return packs.size() - 1;
-    }
-
-    ArrayList<String> getCapturingGroup(int index) {
-        return capturingGroups.get(index);
+    StandardResult toStandardResult() {
+        return new StandardResult(sentenceId, capturingGroups);
     }
 }
