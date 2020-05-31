@@ -1,12 +1,12 @@
 package com.dicio.component.standard;
 
-import java.util.List;
+import java.util.Map;
 
 public class StandardResult {
     private final String sentenceId;
-    private final List<List<String>> capturingGroups;
+    private final Map<String, InputWordRange> capturingGroups;
 
-    StandardResult(String sentenceId, List<List<String>> capturingGroups) {
+    StandardResult(final String sentenceId, final Map<String, InputWordRange> capturingGroups) {
         this.sentenceId = sentenceId;
         this.capturingGroups = capturingGroups;
     }
@@ -15,7 +15,7 @@ public class StandardResult {
         return sentenceId;
     }
 
-    public List<List<String>> getCapturingGroups() {
+    public Map<String, InputWordRange> getCapturingGroups() {
         return capturingGroups;
     }
 }

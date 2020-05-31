@@ -1,39 +1,67 @@
 package com.dicio.component.standard;
 
+import java.util.HashMap;
+import java.util.Map;
+
 class PartialScoreResult {
-    final int nrFoundWords, nrExpectedWords;
-    int usedWordsOffset;
-    final int usedWordsSize;
 
-    PartialScoreResult(int nrFoundWords, int nrExpectedWords, int usedWordsOffset, int usedWordsSize) {
-        this.nrFoundWords = nrFoundWords;
-        this.nrExpectedWords = nrExpectedWords;
-        this.usedWordsOffset = usedWordsOffset;
-        this.usedWordsSize = usedWordsSize;
-    }
-
-    int firstUsedIdx() {
-        return usedWordsOffset;
-    }
-    int onePastLastUsedIdx() {
-        return usedWordsOffset + usedWordsSize;
-    }
-
-    static float dropAt0point75(float x) {
+    static float dropAt0point75(final float x) {
         // similar to a sigmoid; it has low values in range [0,0.75) and high values otherwise
         return (171f * (x-.65f)/(.2f+Math.abs(x-.75f)) + 117f) / 250f;
     }
-    static float dropAt0point6(float x) {
+
+    static float dropAt0point6(final float x) {
         // similar to a sigmoid; it has low values in range [0,0.6) and high values otherwise
         return (28 * (x-.55f)/(.15f+Math.abs(x-.55f)) + 22f) / 43f;
     }
 
-    float score(int nrActualWords) {
-        if (nrFoundWords == 0) {
-            return 0.0f; // it should be 0 even when nrActualWords == 0
+
+    private int skippedWords;
+    private int skippedInputWordsSides;
+    private int skippedInputWordsAmid;
+    private int wordsInCapturingGroups;
+    private boolean foundWordBeforeEnd;
+    private Map<String, InputWordRange> capturingGroups;
+
+    /**
+     * Deep copy constructor
+     */
+    PartialScoreResult(final int skippedWordsEnd, final int skippedInputWordsEnd) {
+        skippedWords = skippedWordsEnd;
+        skippedInputWordsSides = skippedInputWordsEnd;
+        skippedInputWordsAmid = 0;
+        wordsInCapturingGroups = 0;
+        foundWordBeforeEnd = true;
+        capturingGroups = new HashMap<>();
+    }
+
+    PartialScoreResult(final PartialScoreResult other) {
+        skippedWords = other.skippedWords;
+        skippedInputWordsSides = other.skippedInputWordsSides;
+        skippedInputWordsAmid = other.skippedInputWordsAmid;
+        wordsInCapturingGroups = other.wordsInCapturingGroups;
+        foundWordBeforeEnd = other.foundWordBeforeEnd;
+
+        capturingGroups = new HashMap<>();
+        for (Map.Entry<String, InputWordRange> entry : other.capturingGroups.entrySet()) {
+            capturingGroups.put(entry.getKey(), new InputWordRange(entry.getValue()));
+        }
+    }
+
+
+    float value(final int wordCount, final int inputWordCount) {
+        if (inputWordCount == 0) {
+            return 0.0f;
         }
 
-        float calculatedScore = dropAt0point75((float)nrFoundWords/nrExpectedWords) * dropAt0point6((float)nrFoundWords/nrActualWords);
+        float calculatedScore = dropAt0point75((float) (wordCount - skippedWords) / wordCount);
+        if (inputWordCount != wordsInCapturingGroups) {
+            calculatedScore *= dropAt0point6((float) (inputWordCount
+                    - wordsInCapturingGroups
+                    - skippedInputWordsSides
+                    - skippedInputWordsAmid) / (inputWordCount - wordsInCapturingGroups));
+        }
+
 
         // eliminate floating point errors
         if (calculatedScore > 1.0f) {
@@ -43,7 +71,87 @@ class PartialScoreResult {
         }
         return calculatedScore;
     }
-    float score() {
-        return score(usedWordsSize);
+
+    public Map<String, InputWordRange> getCapturingGroups() {
+        return capturingGroups;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("{skippedWords=");
+        stringBuilder.append(skippedWords);
+        stringBuilder.append(", skippedInputWordsSides=");
+        stringBuilder.append(skippedInputWordsSides);
+        stringBuilder.append(", skippedInputWordsAmid=");
+        stringBuilder.append(skippedInputWordsAmid);
+        stringBuilder.append(", wordsInCapturingGroups=");
+        stringBuilder.append(wordsInCapturingGroups);
+
+        stringBuilder.append(", capturingGroups=[");
+        for (final Map.Entry<String, InputWordRange> capturingGroup : capturingGroups.entrySet()) {
+            stringBuilder.append(capturingGroup.getKey());
+            stringBuilder.append("=");
+            stringBuilder.append(capturingGroup.getValue().toString());
+            stringBuilder.append(";");
+        }
+        stringBuilder.append("]}");
+
+        return stringBuilder.toString();
+    }
+
+
+    PartialScoreResult skipInputWord(final boolean foundWordAfterStart) {
+        if (foundWordBeforeEnd && foundWordAfterStart) {
+            ++skippedInputWordsAmid;
+        } else {
+            ++skippedInputWordsSides;
+        }
+        return this;
+    }
+
+    PartialScoreResult skipWord() {
+        ++skippedWords;
+        return this;
+    }
+
+    PartialScoreResult skipCapturingGroup() {
+        skippedWords += 2;
+        return this;
+    }
+
+    PartialScoreResult setCapturingGroup(final String id, final InputWordRange range) {
+
+        capturingGroups.put(id, range);
+        wordsInCapturingGroups += range.to() - range.from();
+        return this;
+    }
+
+
+    /**
+     * In case of equality, {@code this} is preferred
+     */
+    PartialScoreResult keepBest(final PartialScoreResult other,
+                                final int wordCount,
+                                final int inputWordCount) {
+        float thisValue = this.value(wordCount, inputWordCount);
+        float otherValue = other.value(wordCount, inputWordCount);
+
+        // boost matches with more words in capturing groups, but only if not skipped more words
+        if (this.skippedWords == other.skippedWords) {
+            int sumWordsInCapturingGroups =
+                    this.wordsInCapturingGroups + other.wordsInCapturingGroups;
+            if (sumWordsInCapturingGroups != 0) {
+                thisValue += 0.05f * this.wordsInCapturingGroups / sumWordsInCapturingGroups;
+                otherValue += 0.05f * other.wordsInCapturingGroups / sumWordsInCapturingGroups;
+            }
+        }
+
+        return thisValue >= otherValue ? this : other;
+    }
+
+    PartialScoreResult foundWordBeforeEnd() {
+        this.foundWordBeforeEnd = false;
+        return this;
     }
 }

@@ -1,9 +1,12 @@
 package com.dicio.component.standard;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -13,43 +16,94 @@ public class SentenceTest {
     private static final float floatEqualsDelta = 0.0001f;
 
 
-    private ArrayList<String> split(String str) {
-        ArrayList<String> splitStr = new ArrayList<>(Arrays.asList(str.split(" ")));
-        splitStr.removeAll(Arrays.asList(""));
+    private List<String> split(String str) {
+        List<String> splitStr = new ArrayList<>(Arrays.asList(str.split(" ")));
+        splitStr.removeAll(Collections.singletonList(""));
         return splitStr;
     }
-    private String[] splitArr(String str) {
-        ArrayList<String> splitStr = split(str);
-        return splitStr.toArray(new String[0]);
+
+
+    private void addAllWords(final String pack, final List<Word> words) {
+        final List<String> packWords = split(pack);
+        for (int i = 0; i < packWords.size(); ++i) {
+            words.add(new Word(packWords.get(i), false, words.size() + 1));
+        }
     }
 
-    private Sentence getSentence(String pack1) {
-        return new Sentence("", splitArr(pack1));
+    private void addCapturingGroup(int index, final List<Word> words) {
+        words.add(new Word(Integer.toString(index), true, words.size() + 1));
     }
-    private Sentence getSentence(String pack1, String pack2) {
-        return new Sentence("", splitArr(pack1), splitArr(pack2));
+
+
+    private class SentenceInfo {
+        final int wordCount;
+        final Sentence sentence;
+
+        SentenceInfo(final String pack1) {
+            List<Word> words = new ArrayList<>();
+            addAllWords(pack1, words);
+            wordCount = words.size();
+            sentence = new Sentence("", words.toArray(new Word[0]));
+        }
+
+        SentenceInfo(final String pack1, final String pack2) {
+            List<Word> words = new ArrayList<>();
+            addAllWords(pack1, words);
+            addCapturingGroup(0, words);
+            addAllWords(pack2, words);
+            wordCount = words.size();
+            sentence = new Sentence("", words.toArray(new Word[0]));
+        }
+
+        SentenceInfo(final String pack1, final String pack2, final String pack3) {
+            List<Word> words = new ArrayList<>();
+            addAllWords(pack1, words);
+            addCapturingGroup(0, words);
+            addAllWords(pack2, words);
+            addCapturingGroup(1, words);
+            addAllWords(pack3, words);
+            wordCount = words.size();
+            sentence = new Sentence("", words.toArray(new Word[0]));
+        }
     }
-    private Sentence getSentence(String pack1, String pack2, String pack3) {
-        return new Sentence("", splitArr(pack1), splitArr(pack2), splitArr(pack3));
+
+
+
+    private void assertCapturingGroup(final List<String> inputWords,
+                                      final InputWordRange range, final String captGr) {
+        if (captGr == null) {
+            assertNull(range);
+            return;
+        }
+
+        List<String> captGrWords = split(captGr);
+        List<String> actualCaptGrWords = new ArrayList<>();
+        for (int i = range.from(); i < range.to(); ++i) {
+            actualCaptGrWords.add(inputWords.get(i));
+        }
+
+        assertThat(actualCaptGrWords, CoreMatchers.is(captGrWords));
     }
     
-    private void assertSentence(Sentence s, String input, float a, float b, String captGr0, String captGr1) {
-        float score = s.score(split(input));
-        StandardResult r = s.toStandardResult();
-        assertEquals((captGr0 != null ? 1 : 0) + (captGr1 != null ? 1 : 0), r.getCapturingGroups().size());
+    private void assertSentence(final SentenceInfo s, final String input,
+                                final float a, final float b,
+                                final String captGr0, final String captGr1) {
+        List<String> inputWords = split(input);
+        float score = s.sentence.score(inputWords);
+        PartialScoreResult scoreResult = s.sentence.bestScore(0, 0, false);
 
+        assertEquals(score, scoreResult.value(s.wordCount, inputWords.size()), 0.0f);
         if (a == b) {
-            assertEquals("Score " + score + " is not equal to " + a, a, score, floatEqualsDelta);
+            assertEquals("Score " + score + " " + scoreResult + " is not equal to " + a, a, score, floatEqualsDelta);
         } else {
-            assertTrue("Score " + score + " is not in range [" + a + ", " + b + "]", a <= score && score <= b);
+            assertTrue("Score " + score + " " + scoreResult + " is not in range [" + a + ", " + b + "]", a <= score && score <= b);
         }
 
-        if (captGr0 != null) {
-            assertArrayEquals(splitArr(captGr0), r.getCapturingGroups().get(0).toArray());
-        }
-        if (captGr1 != null) {
-            assertArrayEquals(splitArr(captGr1), r.getCapturingGroups().get(1).toArray());
-        }
+        StandardResult r = s.sentence.toStandardResult();
+        assertEquals((captGr0 != null ? 1 : 0) + (captGr1 != null ? 1 : 0),
+                r.getCapturingGroups().size());
+        assertCapturingGroup(inputWords, r.getCapturingGroups().get("0"), captGr0);
+        assertCapturingGroup(inputWords, r.getCapturingGroups().get("1"), captGr1);
     }
 
 
@@ -57,40 +111,19 @@ public class SentenceTest {
     @Test
     public void testSentenceId() {
         String sentenceId = "SentenceID";
-        Sentence s = new Sentence(sentenceId, splitArr("hello"));
+        Sentence s = new Sentence(sentenceId, new Word("hello", false, 1, 2, 3, 4));
+        s.score(new ArrayList<>());
         StandardResult r = s.toStandardResult();
 
         assertEquals(sentenceId, r.getSentenceId());
     }
 
-    @Test
-    public void testPartialScoreValues() {
-        PartialScoreResult scoreLeft = Sentence.scoreFromLeft(split("hello"), split("bob hello mary"));
-        assertEquals(scoreLeft.nrFoundWords, 1);
-        assertEquals(scoreLeft.nrExpectedWords, 1);
-        assertEquals(scoreLeft.usedWordsOffset, 0);
-        assertEquals(scoreLeft.usedWordsSize, 2);
-
-        PartialScoreResult scoreRight = Sentence.scoreFromRight(split("hello"), split("bob hello mary"));
-        assertEquals(scoreRight.nrFoundWords, 1);
-        assertEquals(scoreRight.nrExpectedWords, 1);
-        assertEquals(scoreRight.usedWordsOffset, 1);
-        assertEquals(scoreRight.usedWordsSize, 2);
-    }
-
-    @Test
-    public void testPenalizeIfEmptyCapturingGroup() {
-        assertTrue(Sentence.penalizeIfMissingCapturingGroup(true, 0.5f) < 0.5f);
-        assertEquals(0.5f, Sentence.penalizeIfMissingCapturingGroup(false, 0.5f), 0.0f);
-        assertEquals(0.0f, Sentence.penalizeIfMissingCapturingGroup(true, 0.001f), 0.0f);
-    }
-
 
     @Test
     public void test1p() {
-        Sentence s = getSentence("hello how are you");
+        SentenceInfo s = new SentenceInfo("hello how are you");
 
-        assertSentence(s, "hello how are you",     1.0f, 1.0f, null, null);
+        //assertSentence(s, "hello how are you",     1.0f, 1.0f, null, null);
         assertSentence(s, "hello how is you",      0.7f, 0.8f, null, null);
         assertSentence(s, "hello how are you bob", 0.9f, 1.0f, null, null);
         assertSentence(s, "mary",                  0.0f, 0.0f, null, null);
@@ -100,136 +133,136 @@ public class SentenceTest {
 
     @Test
     public void test2p() {
-        Sentence s = getSentence("hello", "how are you");
+        SentenceInfo s = new SentenceInfo("hello", "how are you");
 
-        assertSentence(s, "hello bob how are you",                     1.0f,  1.0f,  "bob",             null);
-        assertSentence(s, "hello bob and mary how is you",             0.7f,  0.8f,  "bob and mary",    null);
-        assertSentence(s, "hello mary how are steaks inside you",      0.8f,  0.9f,  "mary",            null);
-        assertSentence(s, "hello bob how are steaks doing inside you", 0.6f,  0.7f,  "bob",             null);
-        assertSentence(s, "hi hello bob how are not you",              0.6f,  0.7f,  "bob" ,            null);
-        assertSentence(s, "hi hello mary and bob how are not you",     0.6f,  0.7f,  "mary and bob",    null);
-        assertSentence(s, "hello mary",                                0.5f,  0.5f,  "mary",            null);
-        assertSentence(s, "bob how are you",                           0.5f,  0.5f,  "bob",             null);
-        assertSentence(s, "mary and bob",                              0.0f,  0.0f,  "mary and bob",    null);
-        assertSentence(s, "hello how are you",                         0.75f, 0.75f, "",                null);
-        assertSentence(s, "",                                          0.0f,  0.0f,  "",                null);
-        assertSentence(s, "a a a a hello b how are you",               0.5f,  0.6f,  "a a a a hello b", null);
-        assertSentence(s, "hello b how a a a a are you",               0.7f,  0.8f,  "b how a a a a",   null);
+        assertSentence(s, "hello bob how are you",                     1.0f, 1.0f, "bob",             null);
+        assertSentence(s, "hello bob and mary how is you",             0.7f, 0.8f, "bob and mary",    null);
+        assertSentence(s, "hello mary how are steaks inside you",      0.7f, 0.8f, "mary",            null);
+        assertSentence(s, "hello bob how are steaks doing inside you", 0.5f, 0.6f, "bob",             null);
+        assertSentence(s, "hi hello bob how are not you",              0.7f, 0.8f, "bob" ,            null);
+        assertSentence(s, "hi hello mary and bob how are not you",     0.7f, 0.8f, "mary and bob",    null);
+        assertSentence(s, "hello mary",                                0.1f, 0.2f, "mary",            null);
+        assertSentence(s, "bob how are you",                           0.8f, 0.9f, "bob",             null);
+        assertSentence(s, "mary and bob",                              0.0f, 0.1f, "mary and bob",    null);
+        assertSentence(s, "hello how are you",                         0.8f, 0.9f, "how",             null);
+        assertSentence(s, "",                                          0.0f, 0.0f, null,              null);
+        assertSentence(s, "a a a a hello b how are you",               0.8f, 0.9f, "a a a a hello b", null);
+        assertSentence(s, "hello b how a a a a are you",               0.8f, 0.9f, "b how a a a a",   null);
     }
 
     @Test
     public void test2pLeftEmpty() {
-        Sentence s = getSentence("", "how are you");
+        SentenceInfo s = new SentenceInfo("", "how are you");
 
-        assertSentence(s, "hello bob how are you",                     1.0f,  1.0f,  "hello bob",          null);
-        assertSentence(s, "hello bob and mary how is you",             0.4f,  0.5f,  "hello bob and mary", null);
-        assertSentence(s, "hello mary how are steaks inside you",      0.6f,  0.7f,  "hello mary",         null);
-        assertSentence(s, "hello bob how are steaks doing inside you", 0.3f,  0.4f,  "hello bob",          null);
-        assertSentence(s, "hi hello bob how are not you",              0.8f,  0.9f,  "hi hello bob" ,      null);
-        assertSentence(s, "bob how are you",                           1.0f,  1.0f,  "bob",                null);
-        assertSentence(s, "mary and bob",                              0.0f,  0.0f,  "mary and bob",       null);
-        assertSentence(s, "how are you",                               0.75f, 0.75f, "",                   null);
-        assertSentence(s, "",                                          0.0f,  0.0f,  "",                   null);
+        assertSentence(s, "hello bob how are you",                     1.0f, 1.0f, "hello bob",          null);
+        assertSentence(s, "hello bob and mary how is you",             0.6f, 0.7f, "hello bob and mary", null);
+        assertSentence(s, "hello mary how are steaks inside you",      0.6f, 0.7f, "hello mary",         null);
+        assertSentence(s, "hello bob how are steaks doing inside you", 0.3f, 0.4f, "hello bob",          null);
+        assertSentence(s, "hi hello bob how are not you",              0.8f, 0.9f, "hi hello bob" ,      null);
+        assertSentence(s, "bob how are you",                           1.0f, 1.0f, "bob",                null);
+        assertSentence(s, "mary and bob",                              0.0f, 0.1f, "mary and bob",       null);
+        assertSentence(s, "how are you",                               0.8f, 0.9f, "how",                null);
+        assertSentence(s, "",                                          0.0f, 0.0f, null,                 null);
     }
 
     @Test
     public void test2pRightEmpty() {
-        Sentence s = getSentence("hello", "");
+        SentenceInfo s = new SentenceInfo("hello", "");
 
-        assertSentence(s, "hello bob",       1.0f,  1.0f,  "bob",          null);
-        assertSentence(s, "hi hello bob",    0.3f,  0.4f,  "bob",          null);
-        assertSentence(s, "hi hi hello bob", 0.1f,  0.2f,  "bob",          null);
-        assertSentence(s, "mary and bob",    0.0f,  0.0f,  "mary and bob", null);
-        assertSentence(s, "hello",           0.75f, 0.75f, "",             null);
-        assertSentence(s, "",                0.0f,  0.0f,  "",             null);
+        assertSentence(s, "hello bob",       1.0f, 1.0f, "bob",             null);
+        assertSentence(s, "hi hello bob",    0.3f, 0.4f, "bob",             null);
+        assertSentence(s, "hi hi hello bob", 0.2f, 0.3f, "hi hi hello bob", null);
+        assertSentence(s, "mary and bob",    0.2f, 0.3f, "mary and bob",    null);
+        assertSentence(s, "hello",           0.0f, 0.1f, null,              null);
+        assertSentence(s, "",                0.0f, 0.0f, null,              null);
     }
 
 
     @Test
     public void test3p() {
-        Sentence s = getSentence("i want", "liters of", "please");
+        SentenceInfo s = new SentenceInfo("i want", "liters of", "please");
 
         assertSentence(s, "i want five liters of milk please",                1.0f, 1.0f, "five",            "milk");
         assertSentence(s, "i want five and a half liters of soy milk please", 1.0f, 1.0f, "five and a half", "soy milk");
-        assertSentence(s, "i want five liters of milk",                       0.6f, 0.7f, "five",            "milk");
+        assertSentence(s, "i want five liters of milk",                       0.9f, 1.0f, "five",            "milk");
         assertSentence(s, "five and a half liters of soy milk",               0.3f, 0.4f, "five and a half", "soy milk");
-        assertSentence(s, "i want one liter of milk please",                  0.7f, 0.8f, "one liter",       "milk");
+        assertSentence(s, "i want one liter of milk please",                  0.9f, 1.0f, "one liter",       "milk");
         assertSentence(s, "i want one liter milk please",                     0.6f, 0.7f, "one liter",       "milk");
-        assertSentence(s, "i want one liter soy milk please",                 0.6f, 0.7f, "one liter",       "soy milk");
-        assertSentence(s, "i want one liter of milk",                         0.4f, 0.5f, "one liter",       "milk");
-        assertSentence(s, "one liter of soy milk",                            0.0f, 0.1f, "one liter",       "soy milk");
-        assertSentence(s, "i want milk please",                               0.4f, 0.5f, "milk",            "");
-        assertSentence(s, "i want please",                                    0.1f, 0.2f, "",                "");
-        assertSentence(s, "i do want please",                                 0.0f, 0.1f, "",                "");
-        assertSentence(s, "i want",                                           0.0f, 0.0f, "",                "");
-        assertSentence(s, "you want five liters of milk please",              0.6f, 0.7f, "five",            "milk");
-        assertSentence(s, "i need five liters of milk please",                0.7f, 0.8f, "need five",       "milk");
+        assertSentence(s, "i want one liter soy milk please",                 0.6f, 0.7f, "one liter soy",   "milk");
+        assertSentence(s, "i want one liter of milk",                         0.6f, 0.7f, "one liter",       "milk");
+        assertSentence(s, "one liter of soy milk",                            0.1f, 0.2f, "one liter",       "soy milk");
+        assertSentence(s, "i want milk please",                               0.3f, 0.4f, "milk",            "please");
+        assertSentence(s, "i want please",                                    0.1f, 0.2f, "please",          null);
+        assertSentence(s, "i do want please",                                 0.3f, 0.4f, "do",              "want");
+        assertSentence(s, "i want",                                           0.0f, 0.1f, null,              null);
+        assertSentence(s, "you want five liters of milk please",              0.8f, 0.9f, "five",            "milk");
+        assertSentence(s, "i need five liters of milk please",                0.9f, 1.0f, "need five",       "milk");
         assertSentence(s, "you need five liters of milk please",              0.6f, 0.7f, "you need five",   "milk");
-        assertSentence(s, "i want five liters of soy milk",                   0.6f, 0.7f, "five",            "soy milk");
-        assertSentence(s, "i need five liters of soy milk",                   0.4f, 0.5f, "need five",       "soy milk");
-        assertSentence(s, "one soy milk",                                     0.0f, 0.0f, "one soy",         "milk");
-        assertSentence(s, "milk",                                             0.0f, 0.0f, "milk",            "");
-        assertSentence(s, "",                                                 0.0f, 0.0f, "",                "");
-        assertSentence(s, "i a a a a want f liters of milk please",           0.7f, 0.8f, "a a a a want f",  "milk");
-        assertSentence(s, "i want five liters of m please a a a a",           0.6f, 0.7f, "five",            "m please a a a a");
+        assertSentence(s, "i want five liters of soy milk",                   0.9f, 1.0f, "five",            "soy milk");
+        assertSentence(s, "i need five liters of soy milk",                   0.6f, 0.7f, "need five",       "soy milk");
+        assertSentence(s, "one soy milk",                                     0.0f, 0.1f, "one soy",         "milk");
+        assertSentence(s, "milk",                                             0.0f, 0.1f, "milk",            null);
+        assertSentence(s, "",                                                 0.0f, 0.0f, null,              null);
+        assertSentence(s, "i a a a a want f liters of milk please",           0.9f, 1.0f, "a a a a want f",  "milk");
+        assertSentence(s, "i want five liters of m please a a a a",           0.9f, 1.0f, "five",            "m please a a a a");
     }
 
     @Test
     public void test3pLeftEmpty() {
-        Sentence s = getSentence("", "liters of", "please");
+        SentenceInfo s = new SentenceInfo("", "liters of", "please");
 
-        assertSentence(s, "five liters of milk please",                1.0f,  1.0f,  "five",            "milk");
-        assertSentence(s, "five and a half liters of soy milk please", 1.0f,  1.0f,  "five and a half", "soy milk");
-        assertSentence(s, "five liters of milk",                       0.5f,  0.5f,  "five",            "milk");
-        assertSentence(s, "one liter of milk please",                  0.6f,  0.7f,  "one liter",       "milk");
-        assertSentence(s, "one liter soy milk please",                 0.5f,  0.5f,  "one liter",       "soy milk");
-        assertSentence(s, "one liter of milk",                         0.1f,  0.2f,  "one liter",       "milk");
-        assertSentence(s, "milk please",                               0.25f, 0.25f, "milk",            "");
-        assertSentence(s, "please",                                    0.0f,  0.0f,  "",                "");
-        assertSentence(s, "one soy milk",                              0.0f,  0.0f,  "one soy",         "milk");
-        assertSentence(s, "milk",                                      0.0f,  0.0f,  "milk",            "");
-        assertSentence(s, "",                                          0.0f,  0.0f,  "",                "");
+        assertSentence(s, "five liters of milk please",                1.0f, 1.0f, "five",            "milk");
+        assertSentence(s, "five and a half liters of soy milk please", 1.0f, 1.0f, "five and a half", "soy milk");
+        assertSentence(s, "five liters of milk",                       0.8f, 0.9f, "five",            "milk");
+        assertSentence(s, "one liter of milk please",                  0.8f, 0.9f, "one liter",       "milk");
+        assertSentence(s, "one liter soy milk please",                 0.3f, 0.4f, "one liter soy",   "milk");
+        assertSentence(s, "one liter of milk",                         0.3f, 0.4f, "one liter",       "milk");
+        assertSentence(s, "milk please",                               0.1f, 0.2f, "milk",            "please");
+        assertSentence(s, "please",                                    0.0f, 0.1f, "please",          null);
+        assertSentence(s, "one soy milk",                              0.1f, 0.2f, "one soy",         "milk");
+        assertSentence(s, "milk",                                      0.0f, 0.1f, "milk",            null);
+        assertSentence(s, "",                                          0.0f, 0.0f, null,              null);
     }
 
     @Test
     public void test3pRightEmpty() {
-        Sentence s = getSentence("i want", "liters of", "");
+        SentenceInfo s = new SentenceInfo("i want", "liters of", "");
 
-        assertSentence(s, "i want five liters of milk",                1.0f,  1.0f,  "five",            "milk");
-        assertSentence(s, "i want five and a half liters of soy milk", 1.0f,  1.0f,  "five and a half", "soy milk");
-        assertSentence(s, "five and a half liters of soy milk",        0.5f,  0.5f,  "five and a half", "soy milk");
-        assertSentence(s, "i want one liter of milk",                  0.6f,  0.7f,  "one liter",       "milk");
-        assertSentence(s, "i want one liter milk",                     0.5f,  0.5f,  "one liter",       "milk");
-        assertSentence(s, "one liter of soy milk",                     0.1f,  0.2f,  "one liter",       "soy milk");
-        assertSentence(s, "i want milk",                               0.25f, 0.25f, "milk",            "");
-        assertSentence(s, "i want",                                    0.0f,  0.0f,  "",                "");
-        assertSentence(s, "you want five liters of milk",              0.5f,  0.6f,  "five",            "milk");
-        assertSentence(s, "i need five liters of milk",                0.6f,  0.7f,  "need five",       "milk");
-        assertSentence(s, "you need five liters of milk",              0.5f,  0.5f,  "you need five",   "milk");
-        assertSentence(s, "one soy milk",                              0.0f,  0.0f,  "one soy",         "milk");
-        assertSentence(s, "milk",                                      0.0f,  0.0f,  "milk",            "");
-        assertSentence(s, "",                                          0.0f,  0.0f,  "",                "");
+        assertSentence(s, "i want five liters of milk",                1.0f, 1.0f, "five",            "milk");
+        assertSentence(s, "i want five and a half liters of soy milk", 1.0f, 1.0f, "five and a half", "soy milk");
+        assertSentence(s, "five and a half liters of soy milk",        0.5f, 0.6f, "five and a half", "soy milk");
+        assertSentence(s, "i want one liter of milk",                  0.9f, 1.0f, "one liter",       "milk");
+        assertSentence(s, "i want one liter milk",                     0.5f, 0.6f, "one liter",       "milk");
+        assertSentence(s, "one liter of soy milk",                     0.2f, 0.3f, "one liter",       "soy milk");
+        assertSentence(s, "i want milk",                               0.2f, 0.3f, "milk",            null);
+        assertSentence(s, "i want",                                    0.0f, 0.1f, null,              null);
+        assertSentence(s, "you want five liters of milk",              0.8f, 0.9f, "five",            "milk");
+        assertSentence(s, "i need five liters of milk",                0.9f, 1.0f, "need five",       "milk");
+        assertSentence(s, "you need five liters of milk",              0.5f, 0.6f, "you need five",   "milk");
+        assertSentence(s, "one soy milk",                              0.1f, 0.2f, "one soy",         "milk");
+        assertSentence(s, "milk",                                      0.0f, 0.1f, "milk",            null);
+        assertSentence(s, "",                                          0.0f, 0.0f, null,              null);
     }
 
     @Test
     public void test3pLeftRightEmpty() {
-        Sentence s = getSentence("", "and", "");
+        SentenceInfo s = new SentenceInfo("", "and", "");
 
-        assertSentence(s, "bob and mary",           1.0f,  1.0f,  "bob",          "mary");
-        assertSentence(s, "bob and mary and simon", 1.0f,  1.0f,  "bob and mary", "simon");
-        assertSentence(s, "bob mary",               0.0f,  0.0f,  "bob",          "mary");
-        assertSentence(s, "and mary",               0.75f, 0.75f, "",             "mary");
-        assertSentence(s, "bob and",                0.75f, 0.75f, "bob",          "");
-        assertSentence(s, "",                       0.0f,  0.0f,  "",             "");
+        assertSentence(s, "bob and mary",           1.0f, 1.0f, "bob",          "mary");
+        assertSentence(s, "bob and mary and simon", 1.0f, 1.0f, "bob and mary", "simon");
+        assertSentence(s, "bob mary",               0.5f, 0.6f, "bob",          "mary");
+        assertSentence(s, "and mary",               0.5f, 0.6f, "and",          "mary");
+        assertSentence(s, "bob and",                0.1f, 0.2f, "bob and",      null);
+        assertSentence(s, "",                       0.0f, 0.0f,  null,          null);
     }
 
 
     @Test
     public void testDuplicateWord() {
-        Sentence s = getSentence("how do you do bob");
+        SentenceInfo s = new SentenceInfo("how do you do bob");
 
         assertSentence(s, "how do you do bob", 1.0f, 1.0f, null, null);
-        assertSentence(s, "how does you do bob", 0.2f, 0.3f, null, null);
+        assertSentence(s, "how does you do bob", 0.8f, 0.9f, null, null);
         assertSentence(s, "how does a you do bob", 0.6f, 0.7f, null, null);
     }
 }
