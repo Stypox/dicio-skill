@@ -6,7 +6,7 @@ public class StandardRecognizerData {
     private final InputRecognizer.Specificity specificity;
     private final Sentence[] sentences;
 
-    public StandardRecognizerData(InputRecognizer.Specificity specificity, Sentence[] sentences) {
+    public StandardRecognizerData(InputRecognizer.Specificity specificity, Sentence... sentences) {
         this.specificity = specificity;
         this.sentences = sentences;
     }
