@@ -30,17 +30,8 @@ public class Sentence {
         if (wordIndex >= words.length) {
             return new PartialScoreResult(0,
                     inputWordIndex < inputWords.size() ? inputWords.size() - inputWordIndex : 0);
-        }
-        if (inputWordIndex >= inputWords.size()) {
-            // FIXME Unfortunately, there is no way to check whether subsequent words are capturing
-            //  groups, since it would involve another dynamic programming search.
-            //  So the wrong but much faster behaviour is used instead.
-
-            if (words[wordIndex].isCapturingGroup()) {
-                return new PartialScoreResult(words.length - wordIndex + 1, 0);
-            } else {
-                return new PartialScoreResult(words.length - wordIndex, 0);
-            }
+        } else if (inputWordIndex >= inputWords.size()) {
+            return new PartialScoreResult(words[wordIndex].getMinimumSkippedWordsToEnd(), 0);
         }
 
         int foundWordAfterStartInt = foundWordAfterStart ? 1 : 0;
