@@ -44,7 +44,7 @@ public class SentenceTest {
 
             addAllWords(pack1Words, words, 0);
             wordCount = words.size();
-            sentence = new Sentence("", words.toArray(new Word[0]));
+            sentence = new Sentence("", new int[] {0}, words.toArray(new Word[0]));
         }
 
         SentenceInfo(final String pack1, final String pack2) {
@@ -56,7 +56,7 @@ public class SentenceTest {
             addCapturingGroup(0, words, pack2Words.size());
             addAllWords(pack2Words, words, 0);
             wordCount = words.size();
-            sentence = new Sentence("", words.toArray(new Word[0]));
+            sentence = new Sentence("", new int[] {0}, words.toArray(new Word[0]));
         }
 
         SentenceInfo(final String pack1, final String pack2, final String pack3) {
@@ -71,7 +71,7 @@ public class SentenceTest {
             addCapturingGroup(1, words, pack3Words.size());
             addAllWords(pack3Words, words, 0);
             wordCount = words.size();
-            sentence = new Sentence("", words.toArray(new Word[0]));
+            sentence = new Sentence("", new int[] {0}, words.toArray(new Word[0]));
         }
     }
 
@@ -98,7 +98,7 @@ public class SentenceTest {
                                 final String captGr0, final String captGr1) {
         final List<String> inputWords = split(input);
         float score = s.sentence.score(inputWords);
-        final PartialScoreResult scoreResult = s.sentence.bestScore(0, 0, false);
+        final PartialScoreResult scoreResult = s.sentence.getBestScoreResult();
 
         assertEquals(score, scoreResult.value(inputWords.size()), 0.0f);
         if (a == b) {
@@ -119,7 +119,7 @@ public class SentenceTest {
     @Test
     public void testSentenceId() {
         final String sentenceId = "SentenceID";
-        final Sentence s = new Sentence(sentenceId, new Word("hello", false, 0, 1));
+        final Sentence s = new Sentence(sentenceId, new int[] {0}, new Word("hello", false, 0, 1));
         s.score(new ArrayList<>());
         final StandardResult r = s.toStandardResult();
 
@@ -131,7 +131,7 @@ public class SentenceTest {
     public void test1p() {
         final SentenceInfo s = new SentenceInfo("hello how are you");
 
-        //assertSentence(s, "hello how are you",     1.0f, 1.0f, null, null);
+        assertSentence(s, "hello how are you",     1.0f, 1.0f, null, null);
         assertSentence(s, "hello how is you",      0.7f, 0.8f, null, null);
         assertSentence(s, "hello how are you bob", 0.9f, 1.0f, null, null);
         assertSentence(s, "mary",                  0.0f, 0.0f, null, null);

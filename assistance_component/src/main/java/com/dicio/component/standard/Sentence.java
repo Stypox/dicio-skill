@@ -4,17 +4,20 @@ import java.util.List;
 
 public class Sentence {
     private final String sentenceId;
+    private final int[] startingWordIndices;
     private final Word[] words;
 
     private List<String> inputWords;
     private PartialScoreResult[][][] memory;
+    private PartialScoreResult bestResult;
 
     ////////////////////
     // PUBLIC METHODS //
     ////////////////////
 
-    public Sentence(final String sentenceId, final Word... words) {
+    public Sentence(final String sentenceId, final int[] startingWordIndices, final Word... words) {
         this.sentenceId = sentenceId;
+        this.startingWordIndices = startingWordIndices;
         this.words = words;
     }
 
@@ -22,12 +25,27 @@ public class Sentence {
     public float score(final List<String> inputWords) {
         this.inputWords = inputWords;
         memory = new PartialScoreResult[words.length][inputWords.size()][2];
-        return bestScore(0, 0, false).value(inputWords.size());
+        final int inputWordCount = inputWords.size();
+
+        bestResult = bestScore(startingWordIndices[0], 0, false);
+        for (int i = 1; i != startingWordIndices.length; ++i) {
+            bestResult = bestScore(startingWordIndices[i], 0, false)
+                    .keepBest(bestResult, inputWordCount);
+        }
+
+        // cleanup to prevent memory leaks
+        this.inputWords = null;
+        memory = null;
+        return bestResult.value(inputWordCount);
+    }
+
+    public PartialScoreResult getBestScoreResult() {
+        return bestResult;
     }
 
     public StandardResult toStandardResult() {
-        // assume memory has already been calculated
-        return new StandardResult(sentenceId, bestScore(0, 0, false).getCapturingGroups());
+        // assume bestResult has already been calculated
+        return new StandardResult(sentenceId, bestResult.getCapturingGroups());
     }
 
 
