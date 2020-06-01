@@ -261,8 +261,8 @@ public class SentenceTest {
     public void testDuplicateWord() {
         SentenceInfo s = new SentenceInfo("how do you do bob");
 
-        assertSentence(s, "how do you do bob", 1.0f, 1.0f, null, null);
-        assertSentence(s, "how does you do bob", 0.8f, 0.9f, null, null);
+        assertSentence(s, "how do you do bob",     1.0f, 1.0f, null, null);
+        assertSentence(s, "how does you do bob",   0.8f, 0.9f, null, null);
         assertSentence(s, "how does a you do bob", 0.6f, 0.7f, null, null);
     }
 }
