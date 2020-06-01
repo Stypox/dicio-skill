@@ -22,7 +22,7 @@ public class Sentence {
     public float score(final List<String> inputWords) {
         this.inputWords = inputWords;
         memory = new PartialScoreResult[words.length][inputWords.size()][2];
-        return bestScore(0, 0, false).value(words.length, inputWords.size());
+        return bestScore(0, 0, false).value(inputWords.size());
     }
 
     public StandardResult toStandardResult() {
@@ -79,7 +79,7 @@ public class Sentence {
             result = bestScore(words[wordIndex].getNextIndices()[i],
                     inputWordIndex, foundWordAfterStart)
                     .skipCapturingGroup()
-                    .keepBest(result, words.length, inputWords.size());
+                    .keepBest(result, inputWords.size());
         }
 
         // then try various increasing lengths of capturing group
@@ -90,7 +90,7 @@ public class Sentence {
                 result = bestScore(nextIndex, i, true)
                         .setCapturingGroup(words[wordIndex].toString(),
                                 new InputWordRange(inputWordIndex, i))
-                        .keepBest(result, words.length, inputWords.size());
+                        .keepBest(result, inputWords.size());
             }
         }
 
@@ -106,15 +106,15 @@ public class Sentence {
         if (words[wordIndex].toString().equals(inputWords.get(inputWordIndex))) {
             for (int nextIndex : words[wordIndex].getNextIndices()) {
                 result = bestScore(nextIndex, inputWordIndex + 1, true)
-                        .keepBest(result, words.length, inputWords.size());
+                        .matchWord()
+                        .keepBest(result, inputWords.size());
             }
-            result.foundWordBeforeEnd();
 
         } else {
             for (int nextIndex : words[wordIndex].getNextIndices()) {
                 result = bestScore(nextIndex, inputWordIndex, foundWordAfterStart)
                         .skipWord()
-                        .keepBest(result, words.length, inputWords.size());
+                        .keepBest(result, inputWords.size());
             }
         }
 

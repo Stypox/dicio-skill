@@ -16,6 +16,7 @@ class PartialScoreResult {
     }
 
 
+    private int matchedWords;
     private int skippedWords;
     private int skippedInputWordsSides;
     private int skippedInputWordsAmid;
@@ -27,15 +28,17 @@ class PartialScoreResult {
      * Deep copy constructor
      */
     PartialScoreResult(final int skippedWordsEnd, final int skippedInputWordsEnd) {
+        matchedWords = 0;
         skippedWords = skippedWordsEnd;
         skippedInputWordsSides = skippedInputWordsEnd;
         skippedInputWordsAmid = 0;
         wordsInCapturingGroups = 0;
-        foundWordBeforeEnd = true;
+        foundWordBeforeEnd = false;
         capturingGroups = new HashMap<>();
     }
 
     PartialScoreResult(final PartialScoreResult other) {
+        matchedWords = other.matchedWords;
         skippedWords = other.skippedWords;
         skippedInputWordsSides = other.skippedInputWordsSides;
         skippedInputWordsAmid = other.skippedInputWordsAmid;
@@ -49,12 +52,16 @@ class PartialScoreResult {
     }
 
 
-    float value(final int wordCount, final int inputWordCount) {
+    float value(final int inputWordCount) {
         if (inputWordCount == 0) {
             return 0.0f;
         }
 
-        float calculatedScore = dropAt0point75((float) (wordCount - skippedWords) / wordCount);
+        float calculatedScore = 1.0f;
+        if (matchedWords != 0 || skippedWords != 0) {
+            calculatedScore *= dropAt0point75(
+                    (float) matchedWords / (matchedWords + skippedWords));
+        }
         if (inputWordCount != wordsInCapturingGroups) {
             calculatedScore *= dropAt0point6((float) (inputWordCount
                     - wordsInCapturingGroups
@@ -79,7 +86,9 @@ class PartialScoreResult {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("{skippedWords=");
+        stringBuilder.append("{matchedWords=");
+        stringBuilder.append(matchedWords);
+        stringBuilder.append(", skippedWords=");
         stringBuilder.append(skippedWords);
         stringBuilder.append(", skippedInputWordsSides=");
         stringBuilder.append(skippedInputWordsSides);
@@ -110,6 +119,12 @@ class PartialScoreResult {
         return this;
     }
 
+    PartialScoreResult matchWord() {
+        foundWordBeforeEnd = true;
+        ++matchedWords;
+        return this;
+    }
+
     PartialScoreResult skipWord() {
         ++skippedWords;
         return this;
@@ -122,6 +137,8 @@ class PartialScoreResult {
 
     PartialScoreResult setCapturingGroup(final String id, final InputWordRange range) {
 
+        foundWordBeforeEnd = true;
+        ++matchedWords;
         capturingGroups.put(id, range);
         wordsInCapturingGroups += range.to() - range.from();
         return this;
@@ -132,10 +149,9 @@ class PartialScoreResult {
      * In case of equality, {@code this} is preferred
      */
     PartialScoreResult keepBest(final PartialScoreResult other,
-                                final int wordCount,
                                 final int inputWordCount) {
-        float thisValue = this.value(wordCount, inputWordCount);
-        float otherValue = other.value(wordCount, inputWordCount);
+        float thisValue = this.value(inputWordCount);
+        float otherValue = other.value(inputWordCount);
 
         // boost matches with more words in capturing groups, but only if not skipped more words
         if (this.skippedWords == other.skippedWords) {
@@ -148,10 +164,5 @@ class PartialScoreResult {
         }
 
         return thisValue >= otherValue ? this : other;
-    }
-
-    PartialScoreResult foundWordBeforeEnd() {
-        this.foundWordBeforeEnd = false;
-        return this;
     }
 }

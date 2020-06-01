@@ -100,7 +100,7 @@ public class SentenceTest {
         float score = s.sentence.score(inputWords);
         final PartialScoreResult scoreResult = s.sentence.bestScore(0, 0, false);
 
-        assertEquals(score, scoreResult.value(s.wordCount, inputWords.size()), 0.0f);
+        assertEquals(score, scoreResult.value(inputWords.size()), 0.0f);
         if (a == b) {
             assertEquals("Score " + score + " " + scoreResult + " is not equal to " + a, a, score, floatEqualsDelta);
         } else {
@@ -181,7 +181,7 @@ public class SentenceTest {
         assertSentence(s, "hi hello bob",    0.3f, 0.4f, "bob",             null);
         assertSentence(s, "hi hi hello bob", 0.2f, 0.3f, "hi hi hello bob", null);
         assertSentence(s, "mary and bob",    0.2f, 0.3f, "mary and bob",    null);
-        assertSentence(s, "hello",           0.0f, 0.1f, null,              null);
+        assertSentence(s, "hello",           0.1f, 0.2f, null,              null);
         assertSentence(s, "",                0.0f, 0.0f, null,              null);
     }
 
@@ -200,7 +200,7 @@ public class SentenceTest {
         assertSentence(s, "i want one liter of milk",                         0.6f, 0.7f, "one liter",       "milk");
         assertSentence(s, "one liter of soy milk",                            0.1f, 0.2f, "one liter",       "soy milk");
         assertSentence(s, "i want milk please",                               0.3f, 0.4f, "milk",            "please");
-        assertSentence(s, "i want please",                                    0.0f, 0.1f, "please",          null);
+        assertSentence(s, "i want please",                                    0.1f, 0.2f, "please",          null);
         assertSentence(s, "i do want please",                                 0.3f, 0.4f, "do",              "want");
         assertSentence(s, "i want",                                           0.0f, 0.1f, null,              null);
         assertSentence(s, "you want five liters of milk please",              0.8f, 0.9f, "five",            "milk");
@@ -212,7 +212,7 @@ public class SentenceTest {
         assertSentence(s, "milk",                                             0.0f, 0.1f, "milk",            null);
         assertSentence(s, "",                                                 0.0f, 0.0f, null,              null);
         assertSentence(s, "i a a a a want f liters of milk please",           0.9f, 1.0f, "a a a a want f",  "milk");
-        assertSentence(s, "i want five liters of m please a a a a",           0.9f, 1.0f, "five",            "m please a a a a");
+        assertSentence(s, "i want five liters of m please a a a a",           0.5f, 0.6f, "five",            "m");
     }
 
     @Test
@@ -260,7 +260,7 @@ public class SentenceTest {
         assertSentence(s, "bob and mary and simon", 1.0f, 1.0f, "bob and mary", "simon");
         assertSentence(s, "bob mary",               0.5f, 0.6f, "bob",          "mary");
         assertSentence(s, "and mary",               0.5f, 0.6f, "and",          "mary");
-        assertSentence(s, "bob and",                0.1f, 0.2f, "bob",          null);
+        assertSentence(s, "bob and",                0.2f, 0.3f, "bob",          null);
         assertSentence(s, "",                       0.0f, 0.0f, null,           null);
     }
 
