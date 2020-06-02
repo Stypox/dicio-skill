@@ -4,16 +4,130 @@ import com.dicio.component.InputRecognizer;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class StandardRecognizerTest {
 
+    public static final StandardRecognizerData section_mood = new StandardRecognizerData(
+            InputRecognizer.Specificity.high,
+            new Sentence("", new int[] {0,},
+                    new Word("how", false, 4, 1, 4), new Word("are", false, 3, 2), new Word("you", false, 2, 3, 7),
+                    new Word("doing", false, 1, 7), new Word("is", false, 3, 5), new Word("it", false, 2, 6),
+                    new Word("going", false, 1, 7)),
+            new Sentence("has_place", new int[] {0,},
+                    new Word("how", false, 6, 1), new Word("is", false, 5, 2), new Word("it", false, 4, 3),
+                    new Word("going", false, 3, 4), new Word("over", false, 2, 5), new Word("there", false, 1, 6)));
+
+    public static final StandardRecognizerData section_GPS_navigation = new StandardRecognizerData(
+            InputRecognizer.Specificity.medium,
+            new Sentence("question", new int[] {0, 1,},
+                    new Word("take", false, 9, 2), new Word("bring", false, 11, 2), new Word("me", false, 10, 3),
+                    new Word("to", false, 9, 4), new Word("place", true, 8, 5, 7, 8), new Word("by", false, 6, 6),
+                    new Word("vehicle", true, 5, 7, 8), new Word("please", false, 4, 8)),
+            new Sentence("question", new int[] {0,},
+                    new Word("give", false, 7, 1), new Word("me", false, 6, 2), new Word("directions", false, 5, 3),
+                    new Word("to", false, 4, 4), new Word("place", true, 3, 5, 6), new Word("please", false, 1, 6)),
+            new Sentence("question", new int[] {0,},
+                    new Word("how", false, 9, 1, 2), new Word("do", false, 6, 3), new Word("can", false, 8, 3),
+                    new Word("i", false, 7, 4), new Word("get", false, 6, 5), new Word("to", false, 5, 6),
+                    new Word("place", true, 4, 7)),
+            new Sentence("statement", new int[] {0,},
+                    new Word("i", false, 10, 1), new Word("want", false, 9, 2), new Word("to", false, 8, 3),
+                    new Word("go", false, 7, 4), new Word("to", false, 6, 5), new Word("place", true, 5, 6, 8),
+                    new Word("by", false, 3, 7), new Word("vehicle", true, 2, 8)),
+            new Sentence("statement", new int[] {0,},
+                    new Word("place", true, 10, 1), new Word("is", false, 8, 2), new Word("the", false, 7, 3),
+                    new Word("place", false, 6, 4), new Word("i", false, 5, 5), new Word("want", false, 4, 6),
+                    new Word("to", false, 3, 7), new Word("go", false, 2, 8), new Word("to", false, 1, 9)));
+
+
+    private static void assertRecognized(final StandardRecognizer sr, final String input,
+                                         final String sentenceId,
+                                         final float a, final float b,
+                                         final Map<String, String> capturingGroups) {
+        final List<String> inputWords = SentenceTest.split(input);
+        sr.setInput(inputWords);
+        final float score = sr.score();
+        final StandardResult result = sr.getResult();
+        assertEquals(sentenceId, result.getSentenceId());
+
+        if (a == b) {
+            assertEquals("Score " + score + " is not equal to " + a,
+                    a, score, SentenceTest.floatEqualsDelta);
+        } else {
+            assertTrue("Score " + score + " is not in range [" + a + ", " + b + "]",
+                    a <= score && score <= b);
+        }
+
+        assertEquals(capturingGroups.size(), result.getCapturingGroups().size());
+        for (final Map.Entry<String, String> capturingGroup : capturingGroups.entrySet()) {
+            SentenceTest.assertCapturingGroup(inputWords,
+                    result.getCapturingGroups().get(capturingGroup.getKey()),
+                    capturingGroup.getValue());
+        }
+    }
+
+
     @Test
     public void testSpecificity() {
-        StandardRecognizer sr = new StandardRecognizer(
-                new StandardRecognizerData(InputRecognizer.Specificity.high, new Sentence[]{}));
+        final StandardRecognizer sr = new StandardRecognizer(
+                new StandardRecognizerData(InputRecognizer.Specificity.high));
         assertEquals(InputRecognizer.Specificity.high, sr.specificity());
+    }
+
+    @Test
+    public void testCompilerReadmeMood() {
+        final StandardRecognizer sr = new StandardRecognizer(section_mood);
+        assertEquals(InputRecognizer.Specificity.high, sr.specificity());
+
+        assertRecognized(sr, "how are you",                "",          1.0f, 1.0f, Collections.emptyMap());
+        assertRecognized(sr, "how are you doing",          "",          1.0f, 1.0f, Collections.emptyMap());
+        assertRecognized(sr, "how is it going",            "",          1.0f, 1.0f, Collections.emptyMap());
+        assertRecognized(sr, "how is it going over there", "has_place", 1.0f, 1.0f, Collections.emptyMap());
+
+        assertRecognized(sr, "how is you",                 "",          0.4f, 0.5f, Collections.emptyMap());
+        assertRecognized(sr, "hello how are you doing",    "",          0.9f, 1.0f, Collections.emptyMap());
+        assertRecognized(sr, "how is it",                  "",          0.8f, 0.9f, Collections.emptyMap());
+        assertRecognized(sr, "how is it doing over there", "has_place", 0.8f, 0.9f, Collections.emptyMap());
+        assertRecognized(sr, "how is it going there",      "",          0.9f, 1.0f, Collections.emptyMap());
+    }
+
+    @Test
+    public void testCompilerReadmeNavigation() {
+        final StandardRecognizer sr = new StandardRecognizer(section_GPS_navigation);
+        assertEquals(InputRecognizer.Specificity.medium, sr.specificity());
+
+        final Map<String, String> place = Collections.singletonMap("place", "a");
+        final Map<String, String> placeAndVehicle = new HashMap<String, String>() {{
+            put("place", "a"); put("vehicle", "b"); }};
+
+        assertRecognized(sr, "take me to a please",            "question",  1.0f, 1.0f, place);
+        assertRecognized(sr, "bring me to a please",           "question",  1.0f, 1.0f, place);
+        assertRecognized(sr, "take me to a",                   "question",  1.0f, 1.0f, place);
+        assertRecognized(sr, "bring me to a",                  "question",  1.0f, 1.0f, place);
+        assertRecognized(sr, "take me to a by b please",       "question",  1.0f, 1.0f, placeAndVehicle);
+        assertRecognized(sr, "bring me to a by b please",      "question",  1.0f, 1.0f, placeAndVehicle);
+        assertRecognized(sr, "take me to a by b",              "question",  1.0f, 1.0f, placeAndVehicle);
+        assertRecognized(sr, "bring me to a by b",             "question",  1.0f, 1.0f, placeAndVehicle);
+        assertRecognized(sr, "give me directions to a please", "question",  1.0f, 1.0f, place);
+        assertRecognized(sr, "give me directions to a",        "question",  1.0f, 1.0f, place);
+        assertRecognized(sr, "how do i get to a",              "question",  1.0f, 1.0f, place);
+        assertRecognized(sr, "how can i get to a",             "question",  1.0f, 1.0f, place);
+        assertRecognized(sr, "i want to go to a",              "statement", 1.0f, 1.0f, place);
+        assertRecognized(sr, "i want to go to a by b",         "statement", 1.0f, 1.0f, placeAndVehicle);
+        assertRecognized(sr, "a is the place i want to go to", "statement", 1.0f, 1.0f, place);
+
+        assertRecognized(sr, "hey take me to a please",        "question",  0.9f, 1.0f, place);
+        assertRecognized(sr, "hello car bring me to a please", "question",  0.7f, 0.8f, place);
+        assertRecognized(sr, "take you to a by b please",      "question",  0.8f, 0.9f, placeAndVehicle);
+        assertRecognized(sr, "gave me directions to a",        "question",  0.7f, 0.8f, place);
+        assertRecognized(sr, "please i want to go to a",       "statement", 0.9f, 1.0f, place);
+        assertRecognized(sr, "please i want to go to a by b",  "statement", 0.9f, 1.0f, placeAndVehicle);
     }
 }
