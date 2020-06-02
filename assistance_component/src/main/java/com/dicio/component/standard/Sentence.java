@@ -43,9 +43,9 @@ public class Sentence {
         return bestResult;
     }
 
-    public StandardResult toStandardResult() {
+    public StandardResult toStandardResult(final String input) {
         // assume bestResult has already been calculated
-        return new StandardResult(sentenceId, bestResult.getCapturingGroups());
+        return new StandardResult(sentenceId, input, bestResult.getCapturingGroups());
     }
 
 

@@ -114,7 +114,7 @@ public class SentenceTest {
                     a <= score && score <= b);
         }
 
-        final StandardResult r = s.sentence.toStandardResult();
+        final StandardResult r = s.sentence.toStandardResult(input);
         assertEquals((captGr0 != null ? 1 : 0) + (captGr1 != null ? 1 : 0),
                 r.getCapturingGroups().size());
         assertCapturingGroup(inputWords, r.getCapturingGroups().get("0"), captGr0);
@@ -128,7 +128,7 @@ public class SentenceTest {
         final String sentenceId = "SentenceID";
         final Sentence s = new Sentence(sentenceId, new int[] {0}, new Word("hello", false, 0, 1));
         s.score(new ArrayList<>());
-        final StandardResult r = s.toStandardResult();
+        final StandardResult r = s.toStandardResult("");
 
         assertEquals(sentenceId, r.getSentenceId());
     }

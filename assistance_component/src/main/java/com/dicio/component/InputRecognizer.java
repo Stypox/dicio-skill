@@ -28,12 +28,13 @@ public interface InputRecognizer<ResultType> {
     /**
      * Sets the current input for the recognizer,
      * to be used when {@link #score() score()} is called
-     * @param words input to be recognized
+     * @param input raw input from the user
+     * @param inputWords normalized input split into words
      */
-    void setInput(List<String> words);
+    void setInput(String input, List<String> inputWords);
 
     /**
-     * The score of the input previously set with {@link #setInput(List) setInput()}
+     * The score of the input previously set with {@link #setInput(String, List) setInput()}
      * for this input recognizer
      * @return a number in range [0.0, 1.0]
      */
@@ -41,7 +42,7 @@ public interface InputRecognizer<ResultType> {
 
     /**
      * If this input recognizer has the highest score, this function is called to generate a result
-     * based on the input previously set with {@link #setInput(List) setInput()}
+     * based on the input previously set with {@link #setInput(String, List) setInput()}
      * @return a result useful for the next step of the computation
      */
     ResultType getResult();

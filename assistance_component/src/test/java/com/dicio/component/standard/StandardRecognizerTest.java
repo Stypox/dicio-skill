@@ -52,7 +52,7 @@ public class StandardRecognizerTest {
                                          final float a, final float b,
                                          final Map<String, String> capturingGroups) {
         final List<String> inputWords = SentenceTest.split(input);
-        sr.setInput(inputWords);
+        sr.setInput(input, inputWords);
         final float score = sr.score();
         final StandardResult result = sr.getResult();
         assertEquals(sentenceId, result.getSentenceId());

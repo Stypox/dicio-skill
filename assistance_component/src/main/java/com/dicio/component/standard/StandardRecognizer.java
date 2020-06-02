@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StandardRecognizer implements InputRecognizer<StandardResult> {
-    private StandardRecognizerData data;
-    private List<String> input;
+    private final StandardRecognizerData data;
+    private String input;
+    private List<String> inputWords;
     private Sentence bestSentenceSoFar;
 
 
@@ -15,12 +16,13 @@ public class StandardRecognizer implements InputRecognizer<StandardResult> {
     // Constructor //
     /////////////////
 
-    public StandardRecognizer(StandardRecognizerData data) {
+    public StandardRecognizer(final StandardRecognizerData data) {
         this.data = data;
-        this.input = new ArrayList<>();
+        this.inputWords = new ArrayList<>();
     }
 
-    public StandardRecognizer(InputRecognizer.Specificity specificity, Sentence[] sentences) {
+    public StandardRecognizer(final InputRecognizer.Specificity specificity,
+                              final Sentence[] sentences) {
         this(new StandardRecognizerData(specificity, sentences));
     }
 
@@ -35,8 +37,9 @@ public class StandardRecognizer implements InputRecognizer<StandardResult> {
     }
 
     @Override
-    public void setInput(List<String> words) {
-        this.input = words;
+    public void setInput(final String input, final List<String> inputWords) {
+        this.input = input;
+        this.inputWords = inputWords;
     }
 
     @Override
@@ -44,7 +47,7 @@ public class StandardRecognizer implements InputRecognizer<StandardResult> {
         float maxScoreSoFar = 0;
 
         for (Sentence sentence : data.getSentences()) {
-            float currentScore = sentence.score(this.input);
+            final float currentScore = sentence.score(inputWords);
             if (currentScore > maxScoreSoFar) {
                 maxScoreSoFar = currentScore;
                 bestSentenceSoFar = sentence;
@@ -56,6 +59,6 @@ public class StandardRecognizer implements InputRecognizer<StandardResult> {
 
     @Override
     public StandardResult getResult() {
-        return bestSentenceSoFar.toStandardResult();
+        return bestSentenceSoFar.toStandardResult(input);
     }
 }
