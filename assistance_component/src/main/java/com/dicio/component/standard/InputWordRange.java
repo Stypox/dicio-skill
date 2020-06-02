@@ -16,7 +16,7 @@ public class InputWordRange {
      * @param from the index of the first element of the range
      * @param to the index of one past the last element of the range
      */
-    InputWordRange(final int from, final int to) {
+    public InputWordRange(final int from, final int to) {
         this.from = from;
         this.to = to;
     }
