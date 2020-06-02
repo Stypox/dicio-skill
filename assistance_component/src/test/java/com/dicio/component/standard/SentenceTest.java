@@ -1,5 +1,7 @@
 package com.dicio.component.standard;
 
+import com.dicio.component.util.WordExtractor;
+
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
@@ -14,13 +16,6 @@ public class SentenceTest {
     // [1-3]p means [1-3] packs, that is, [0-2] capturing groups (e.g. test1p=testOnePack)
 
     static final float floatEqualsDelta = 0.0001f;
-
-
-    static List<String> split(final String str) {
-        final List<String> splitStr = new ArrayList<>(Arrays.asList(str.split(" ")));
-        splitStr.removeAll(Collections.singletonList(""));
-        return splitStr;
-    }
 
 
     private static void addAllWords(final List<String> packWords,
@@ -44,7 +39,7 @@ public class SentenceTest {
 
         SentenceInfo(final String pack1) {
             final List<Word> words = new ArrayList<>();
-            final List<String> pack1Words = split(pack1);
+            final List<String> pack1Words = WordExtractor.extractWords(pack1);
 
             addAllWords(pack1Words, words, 0);
             wordCount = words.size();
@@ -53,8 +48,8 @@ public class SentenceTest {
 
         SentenceInfo(final String pack1, final String pack2) {
             final List<Word> words = new ArrayList<>();
-            final List<String> pack1Words = split(pack1);
-            final List<String> pack2Words = split(pack2);
+            final List<String> pack1Words = WordExtractor.extractWords(pack1);
+            final List<String> pack2Words = WordExtractor.extractWords(pack2);
 
             addAllWords(pack1Words, words, 2 + pack2Words.size());
             addCapturingGroup(0, words, pack2Words.size());
@@ -65,9 +60,9 @@ public class SentenceTest {
 
         SentenceInfo(final String pack1, final String pack2, final String pack3) {
             final List<Word> words = new ArrayList<>();
-            final List<String> pack1Words = split(pack1);
-            final List<String> pack2Words = split(pack2);
-            final List<String> pack3Words = split(pack3);
+            final List<String> pack1Words = WordExtractor.extractWords(pack1);
+            final List<String> pack2Words = WordExtractor.extractWords(pack2);
+            final List<String> pack3Words = WordExtractor.extractWords(pack3);
 
             addAllWords(pack1Words, words, 4 + pack2Words.size() + pack3Words.size());
             addCapturingGroup(0, words, 2 + pack2Words.size() + pack3Words.size());
@@ -88,7 +83,7 @@ public class SentenceTest {
             return;
         }
 
-        final List<String> captGrWords = split(captGr);
+        final List<String> captGrWords = WordExtractor.extractWords(captGr);
         final List<String> actualCaptGrWords = new ArrayList<>();
         for (int i = range.from(); i < range.to(); ++i) {
             actualCaptGrWords.add(inputWords.get(i));
@@ -100,7 +95,7 @@ public class SentenceTest {
     private static void assertSentence(final SentenceInfo s, final String input,
                                        final float a, final float b,
                                        final String captGr0, final String captGr1) {
-        final List<String> inputWords = split(input);
+        final List<String> inputWords = WordExtractor.extractWords(input);
         final PartialScoreResult scoreResult = s.sentence.score(inputWords);
         final float score = scoreResult.value(inputWords.size());
 
@@ -114,9 +109,9 @@ public class SentenceTest {
 
         final StandardResult r = scoreResult.toStandardResult(s.sentence.getSentenceId(), input);
         assertEquals((captGr0 != null ? 1 : 0) + (captGr1 != null ? 1 : 0),
-                r.getCapturingGroups().size());
-        assertCapturingGroup(inputWords, r.getCapturingGroups().get("0"), captGr0);
-        assertCapturingGroup(inputWords, r.getCapturingGroups().get("1"), captGr1);
+                r.getCapturingGroupRanges().size());
+        assertCapturingGroup(inputWords, r.getCapturingGroupRanges().get("0"), captGr0);
+        assertCapturingGroup(inputWords, r.getCapturingGroupRanges().get("1"), captGr1);
     }
 
 

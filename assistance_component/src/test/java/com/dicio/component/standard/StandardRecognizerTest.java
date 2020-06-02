@@ -1,6 +1,7 @@
 package com.dicio.component.standard;
 
 import com.dicio.component.InputRecognizer;
+import com.dicio.component.util.WordExtractor;
 
 import org.junit.Test;
 
@@ -51,7 +52,7 @@ public class StandardRecognizerTest {
                                          final String sentenceId,
                                          final float a, final float b,
                                          final Map<String, String> capturingGroups) {
-        final List<String> inputWords = SentenceTest.split(input);
+        final List<String> inputWords = WordExtractor.extractWords(input);
         sr.setInput(input, inputWords);
         final float score = sr.score();
         final StandardResult result = sr.getResult();
@@ -66,10 +67,10 @@ public class StandardRecognizerTest {
                     a <= score && score <= b);
         }
 
-        assertEquals(capturingGroups.size(), result.getCapturingGroups().size());
+        assertEquals(capturingGroups.size(), result.getCapturingGroupRanges().size());
         for (final Map.Entry<String, String> capturingGroup : capturingGroups.entrySet()) {
             SentenceTest.assertCapturingGroup(inputWords,
-                    result.getCapturingGroups().get(capturingGroup.getKey()),
+                    result.getCapturingGroupRanges().get(capturingGroup.getKey()),
                     capturingGroup.getValue());
         }
     }

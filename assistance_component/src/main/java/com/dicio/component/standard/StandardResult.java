@@ -1,5 +1,7 @@
 package com.dicio.component.standard;
 
+import com.dicio.component.util.WordExtractor;
+
 import java.util.Map;
 
 public class StandardResult {
@@ -19,7 +21,15 @@ public class StandardResult {
         return sentenceId;
     }
 
-    public Map<String, InputWordRange> getCapturingGroups() {
+    public Map<String, InputWordRange> getCapturingGroupRanges() {
         return capturingGroups;
+    }
+
+    public String getCapturingGroup(final String name) {
+        if (capturingGroups.containsKey(name)) {
+            return WordExtractor.extractCapturingGroup(input, capturingGroups.get(name));
+        } else {
+            return null;
+        }
     }
 }
