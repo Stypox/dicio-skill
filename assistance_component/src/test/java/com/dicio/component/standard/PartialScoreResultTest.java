@@ -26,4 +26,10 @@ public class PartialScoreResultTest {
         assertTrue(PartialScoreResult.dropAt0point6(0.6f) < 0.7f);
         assertTrue(PartialScoreResult.dropAt0point6(0.5f) < 0.4f);
     }
+
+    @Test
+    public void testScore() {
+        assertEquals(0.0f, new PartialScoreResult(1000000, 1000000).value(5), floatEqualsDelta);
+        assertEquals(1.0f, new PartialScoreResult(      0,       0).value(5), floatEqualsDelta);
+    }
 }

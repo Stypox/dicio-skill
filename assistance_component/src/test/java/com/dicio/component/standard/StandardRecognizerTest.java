@@ -55,6 +55,7 @@ public class StandardRecognizerTest {
         sr.setInput(input, inputWords);
         final float score = sr.score();
         final StandardResult result = sr.getResult();
+        sr.cleanup();
         assertEquals(sentenceId, result.getSentenceId());
 
         if (a == b) {
@@ -79,6 +80,7 @@ public class StandardRecognizerTest {
         final StandardRecognizer sr = new StandardRecognizer(
                 new StandardRecognizerData(InputRecognizer.Specificity.high));
         assertEquals(InputRecognizer.Specificity.high, sr.specificity());
+        sr.cleanup();
     }
 
     @Test

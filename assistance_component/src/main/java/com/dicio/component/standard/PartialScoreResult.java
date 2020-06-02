@@ -109,6 +109,11 @@ class PartialScoreResult {
         return stringBuilder.toString();
     }
 
+    public StandardResult toStandardResult(final String sentenceId, final String input) {
+        // assume bestResult has already been calculated
+        return new StandardResult(sentenceId, input, getCapturingGroups());
+    }
+
 
     PartialScoreResult skipInputWord(final boolean foundWordAfterStart) {
         if (foundWordBeforeEnd && foundWordAfterStart) {

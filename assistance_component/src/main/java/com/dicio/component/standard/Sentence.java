@@ -9,7 +9,6 @@ public class Sentence {
 
     private List<String> inputWords;
     private PartialScoreResult[][][] memory;
-    private PartialScoreResult bestResult;
 
     ////////////////////
     // PUBLIC METHODS //
@@ -22,12 +21,12 @@ public class Sentence {
     }
 
 
-    public float score(final List<String> inputWords) {
+    public PartialScoreResult score(final List<String> inputWords) {
         this.inputWords = inputWords;
         memory = new PartialScoreResult[words.length][inputWords.size()][2];
         final int inputWordCount = inputWords.size();
 
-        bestResult = bestScore(startingWordIndices[0], 0, false);
+        PartialScoreResult bestResult = bestScore(startingWordIndices[0], 0, false);
         for (int i = 1; i != startingWordIndices.length; ++i) {
             bestResult = bestScore(startingWordIndices[i], 0, false)
                     .keepBest(bestResult, inputWordCount);
@@ -36,18 +35,12 @@ public class Sentence {
         // cleanup to prevent memory leaks
         this.inputWords = null;
         memory = null;
-        return bestResult.value(inputWordCount);
-    }
-
-    public PartialScoreResult getBestScoreResult() {
         return bestResult;
     }
 
-    public StandardResult toStandardResult(final String input) {
-        // assume bestResult has already been calculated
-        return new StandardResult(sentenceId, input, bestResult.getCapturingGroups());
+    public String getSentenceId() {
+        return sentenceId;
     }
-
 
     ///////////
     // SCORE //

@@ -46,4 +46,10 @@ public interface InputRecognizer<ResultType> {
      * @return a result useful for the next step of the computation
      */
     ResultType getResult();
+
+    /**
+     * To prevent excessive memory usage, release all temporary resources and set to {@code null}
+     * all temporary variables used while calculating the score and getting the result.
+     */
+    void cleanup();
 }

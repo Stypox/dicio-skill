@@ -9,7 +9,9 @@ public class StandardRecognizer implements InputRecognizer<StandardResult> {
     private final StandardRecognizerData data;
     private String input;
     private List<String> inputWords;
-    private Sentence bestSentenceSoFar;
+
+    private PartialScoreResult bestResultSoFar;
+    private String bestSentenceIdSoFar;
 
 
     /////////////////
@@ -44,21 +46,29 @@ public class StandardRecognizer implements InputRecognizer<StandardResult> {
 
     @Override
     public float score() {
-        float maxScoreSoFar = 0;
-
-        for (Sentence sentence : data.getSentences()) {
-            final float currentScore = sentence.score(inputWords);
-            if (currentScore > maxScoreSoFar) {
-                maxScoreSoFar = currentScore;
-                bestSentenceSoFar = sentence;
+        bestResultSoFar = data.getSentences()[0].score(inputWords);
+        bestSentenceIdSoFar = data.getSentences()[0].getSentenceId();
+        for (int i = 1; i < data.getSentences().length; ++i) {
+            final PartialScoreResult result = data.getSentences()[i].score(inputWords);
+            if (result.value(inputWords.size()) > bestResultSoFar.value(inputWords.size())) {
+                bestResultSoFar = result;
+                bestSentenceIdSoFar = data.getSentences()[i].getSentenceId();
             }
         }
 
-        return maxScoreSoFar;
+        return bestResultSoFar.value(inputWords.size());
     }
 
     @Override
     public StandardResult getResult() {
-        return bestSentenceSoFar.toStandardResult(input);
+        return bestResultSoFar.toStandardResult(bestSentenceIdSoFar, input);
+    }
+
+    @Override
+    public void cleanup() {
+        input = null;
+        inputWords = null;
+        bestResultSoFar = null;
+        bestSentenceIdSoFar = null;
     }
 }

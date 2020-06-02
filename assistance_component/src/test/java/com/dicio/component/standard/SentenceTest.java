@@ -80,7 +80,6 @@ public class SentenceTest {
     }
 
 
-
     static void assertCapturingGroup(final List<String> inputWords,
                                      final InputWordRange range,
                                      final String captGr) {
@@ -102,10 +101,9 @@ public class SentenceTest {
                                        final float a, final float b,
                                        final String captGr0, final String captGr1) {
         final List<String> inputWords = split(input);
-        final float score = s.sentence.score(inputWords);
-        final PartialScoreResult scoreResult = s.sentence.getBestScoreResult();
+        final PartialScoreResult scoreResult = s.sentence.score(inputWords);
+        final float score = scoreResult.value(inputWords.size());
 
-        assertEquals(score, scoreResult.value(inputWords.size()), 0.0f);
         if (a == b) {
             assertEquals("Score " + score + " " + scoreResult + " is not equal to " + a,
                     a, score, floatEqualsDelta);
@@ -114,23 +112,11 @@ public class SentenceTest {
                     a <= score && score <= b);
         }
 
-        final StandardResult r = s.sentence.toStandardResult(input);
+        final StandardResult r = scoreResult.toStandardResult(s.sentence.getSentenceId(), input);
         assertEquals((captGr0 != null ? 1 : 0) + (captGr1 != null ? 1 : 0),
                 r.getCapturingGroups().size());
         assertCapturingGroup(inputWords, r.getCapturingGroups().get("0"), captGr0);
         assertCapturingGroup(inputWords, r.getCapturingGroups().get("1"), captGr1);
-    }
-
-
-
-    @Test
-    public void testSentenceId() {
-        final String sentenceId = "SentenceID";
-        final Sentence s = new Sentence(sentenceId, new int[] {0}, new Word("hello", false, 0, 1));
-        s.score(new ArrayList<>());
-        final StandardResult r = s.toStandardResult("");
-
-        assertEquals(sentenceId, r.getSentenceId());
     }
 
 
@@ -144,7 +130,6 @@ public class SentenceTest {
         assertSentence(s, "mary",                  0.0f, 0.0f, null, null);
         assertSentence(s, "",                      0.0f, 0.0f, null, null);
     }
-
 
     @Test
     public void test2p() {
