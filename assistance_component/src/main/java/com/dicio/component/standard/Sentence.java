@@ -101,10 +101,10 @@ public class Sentence {
         }
 
         // then try various increasing lengths of capturing group
-        for (int i = inputWordIndex + 1; i <= inputWords.size(); ++i) {
+        for (int i = inputWords.size(); i > inputWordIndex; --i) {
             for (int nextIndex : words[wordIndex].getNextIndices()) {
                 // keepBest will keep the current (i.e. latest) result in case of equality
-                // so bigger capturing groups are preferred
+                // so smaller capturing groups are preferred (leading to more specific sentences)
                 result = bestScore(nextIndex, i, true)
                         .setCapturingGroup(words[wordIndex].toString(),
                                 new InputWordRange(inputWordIndex, i))

@@ -136,7 +136,6 @@ class PartialScoreResult {
     }
 
     PartialScoreResult setCapturingGroup(final String id, final InputWordRange range) {
-
         foundWordBeforeEnd = true;
         ++matchedWords;
         capturingGroups.put(id, range);
@@ -154,7 +153,7 @@ class PartialScoreResult {
         float otherValue = other.value(inputWordCount);
 
         // boost matches with more words in capturing groups, but only if not skipped more words
-        if (this.skippedWords == other.skippedWords) {
+        if (this.skippedWords == other.skippedWords && this.matchedWords == other.matchedWords) {
             int sumWordsInCapturingGroups =
                     this.wordsInCapturingGroups + other.wordsInCapturingGroups;
             if (sumWordsInCapturingGroups != 0) {
