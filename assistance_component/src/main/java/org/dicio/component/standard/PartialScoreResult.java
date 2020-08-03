@@ -1,4 +1,4 @@
-package com.dicio.component.standard;
+package org.dicio.component.standard;
 
 import java.util.HashMap;
 import java.util.Map;

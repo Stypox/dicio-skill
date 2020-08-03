@@ -1,13 +1,11 @@
-package com.dicio.component.standard;
+package org.dicio.component.standard;
 
-import com.dicio.component.util.WordExtractor;
+import org.dicio.component.util.WordExtractor;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;

@@ -1,6 +1,6 @@
-package com.dicio.component.util;
+package org.dicio.component.util;
 
-import com.dicio.component.standard.InputWordRange;
+import org.dicio.component.standard.InputWordRange;
 
 import java.util.ArrayList;
 import java.util.List;

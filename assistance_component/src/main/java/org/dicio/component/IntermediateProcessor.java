@@ -1,4 +1,4 @@
-package com.dicio.component;
+package org.dicio.component;
 
 /**
  * Processes the data from the previous step of computation to produce a result to be passed to the

@@ -1,6 +1,6 @@
-package com.dicio.component.standard;
+package org.dicio.component.standard;
 
-import com.dicio.component.InputRecognizer;
+import org.dicio.component.InputRecognizer;
 
 import java.util.ArrayList;
 import java.util.List;

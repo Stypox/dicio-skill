@@ -1,4 +1,4 @@
-package com.dicio.component.standard;
+package org.dicio.component.standard;
 
 public class Word {
     private final String value;

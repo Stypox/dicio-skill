@@ -1,4 +1,4 @@
-package com.dicio.component;
+package org.dicio.component;
 
 import java.util.List;
 

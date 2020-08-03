@@ -1,7 +1,7 @@
-package com.dicio.component.standard;
+package org.dicio.component.standard;
 
-import com.dicio.component.InputRecognizer;
-import com.dicio.component.util.WordExtractor;
+import org.dicio.component.InputRecognizer;
+import org.dicio.component.util.WordExtractor;
 
 import org.junit.Test;
 
