@@ -31,45 +31,37 @@ public class SentenceTest {
     }
 
 
-    private static class SentenceInfo {
-        final int wordCount;
-        final Sentence sentence;
+    private static Sentence sent(final String pack1) {
+        final List<Word> words = new ArrayList<>();
+        final List<String> pack1Words = WordExtractor.extractWords(pack1);
 
-        SentenceInfo(final String pack1) {
-            final List<Word> words = new ArrayList<>();
-            final List<String> pack1Words = WordExtractor.extractWords(pack1);
+        addAllWords(pack1Words, words, 0);
+        return new Sentence("", new int[] {0}, words.toArray(new Word[0]));
+    }
 
-            addAllWords(pack1Words, words, 0);
-            wordCount = words.size();
-            sentence = new Sentence("", new int[] {0}, words.toArray(new Word[0]));
-        }
+    private static Sentence sent(final String pack1, final String pack2) {
+        final List<Word> words = new ArrayList<>();
+        final List<String> pack1Words = WordExtractor.extractWords(pack1);
+        final List<String> pack2Words = WordExtractor.extractWords(pack2);
 
-        SentenceInfo(final String pack1, final String pack2) {
-            final List<Word> words = new ArrayList<>();
-            final List<String> pack1Words = WordExtractor.extractWords(pack1);
-            final List<String> pack2Words = WordExtractor.extractWords(pack2);
+        addAllWords(pack1Words, words, 2 + pack2Words.size());
+        addCapturingGroup(0, words, pack2Words.size());
+        addAllWords(pack2Words, words, 0);
+        return new Sentence("", new int[] {0}, words.toArray(new Word[0]));
+    }
 
-            addAllWords(pack1Words, words, 2 + pack2Words.size());
-            addCapturingGroup(0, words, pack2Words.size());
-            addAllWords(pack2Words, words, 0);
-            wordCount = words.size();
-            sentence = new Sentence("", new int[] {0}, words.toArray(new Word[0]));
-        }
+    private static Sentence sent(final String pack1, final String pack2, final String pack3) {
+        final List<Word> words = new ArrayList<>();
+        final List<String> pack1Words = WordExtractor.extractWords(pack1);
+        final List<String> pack2Words = WordExtractor.extractWords(pack2);
+        final List<String> pack3Words = WordExtractor.extractWords(pack3);
 
-        SentenceInfo(final String pack1, final String pack2, final String pack3) {
-            final List<Word> words = new ArrayList<>();
-            final List<String> pack1Words = WordExtractor.extractWords(pack1);
-            final List<String> pack2Words = WordExtractor.extractWords(pack2);
-            final List<String> pack3Words = WordExtractor.extractWords(pack3);
-
-            addAllWords(pack1Words, words, 4 + pack2Words.size() + pack3Words.size());
-            addCapturingGroup(0, words, 2 + pack2Words.size() + pack3Words.size());
-            addAllWords(pack2Words, words, 2 + pack3Words.size());
-            addCapturingGroup(1, words, pack3Words.size());
-            addAllWords(pack3Words, words, 0);
-            wordCount = words.size();
-            sentence = new Sentence("", new int[] {0}, words.toArray(new Word[0]));
-        }
+        addAllWords(pack1Words, words, 4 + pack2Words.size() + pack3Words.size());
+        addCapturingGroup(0, words, 2 + pack2Words.size() + pack3Words.size());
+        addAllWords(pack2Words, words, 2 + pack3Words.size());
+        addCapturingGroup(1, words, pack3Words.size());
+        addAllWords(pack3Words, words, 0);
+        return new Sentence("", new int[] {0}, words.toArray(new Word[0]));
     }
 
 
@@ -90,11 +82,11 @@ public class SentenceTest {
         assertThat(actualCaptGrWords, CoreMatchers.is(captGrWords));
     }
     
-    private static void assertSentence(final SentenceInfo s, final String input,
+    private static void assertSentence(final Sentence s, final String input,
                                        final float a, final float b,
                                        final String captGr0, final String captGr1) {
         final List<String> inputWords = WordExtractor.extractWords(input);
-        final PartialScoreResult scoreResult = s.sentence.score(inputWords);
+        final PartialScoreResult scoreResult = s.score(inputWords);
         final float score = scoreResult.value(inputWords.size());
 
         if (a == b) {
@@ -105,7 +97,7 @@ public class SentenceTest {
                     a <= score && score <= b);
         }
 
-        final StandardResult r = scoreResult.toStandardResult(s.sentence.getSentenceId(), input);
+        final StandardResult r = scoreResult.toStandardResult(s.getSentenceId(), input);
         assertEquals((captGr0 != null ? 1 : 0) + (captGr1 != null ? 1 : 0),
                 r.getCapturingGroupRanges().size());
         assertCapturingGroup(inputWords, r.getCapturingGroupRanges().get("0"), captGr0);
@@ -115,7 +107,7 @@ public class SentenceTest {
 
     @Test
     public void test1p() {
-        final SentenceInfo s = new SentenceInfo("hello how are you");
+        final Sentence s = sent("hello how are you");
 
         assertSentence(s, "hello how are you",     1.0f, 1.0f, null, null);
         assertSentence(s, "hello how is you",      0.7f, 0.8f, null, null);
@@ -126,7 +118,7 @@ public class SentenceTest {
 
     @Test
     public void test2p() {
-        final SentenceInfo s = new SentenceInfo("hello", "how are you");
+        final Sentence s = sent("hello", "how are you");
 
         assertSentence(s, "hello bob how are you",                     1.0f, 1.0f, "bob",             null);
         assertSentence(s, "hello bob and mary how is you",             0.7f, 0.8f, "bob and mary",    null);
@@ -145,7 +137,7 @@ public class SentenceTest {
 
     @Test
     public void test2pLeftEmpty() {
-        final SentenceInfo s = new SentenceInfo("", "how are you");
+        final Sentence s = sent("", "how are you");
 
         assertSentence(s, "hello bob how are you",                     1.0f, 1.0f, "hello bob",          null);
         assertSentence(s, "hello bob and mary how is you",             0.6f, 0.7f, "hello bob and mary", null);
@@ -160,7 +152,7 @@ public class SentenceTest {
 
     @Test
     public void test2pRightEmpty() {
-        final SentenceInfo s = new SentenceInfo("hello", "");
+        final Sentence s = sent("hello", "");
 
         assertSentence(s, "hello bob",       1.0f, 1.0f, "bob",             null);
         assertSentence(s, "hi hello bob",    0.3f, 0.4f, "bob",             null);
@@ -173,7 +165,7 @@ public class SentenceTest {
 
     @Test
     public void test3p() {
-        final SentenceInfo s = new SentenceInfo("i want", "liters of", "please");
+        final Sentence s = sent("i want", "liters of", "please");
 
         assertSentence(s, "i want five liters of milk please",                1.0f, 1.0f, "five",            "milk");
         assertSentence(s, "i want five and a half liters of soy milk please", 1.0f, 1.0f, "five and a half", "soy milk");
@@ -202,7 +194,7 @@ public class SentenceTest {
 
     @Test
     public void test3pLeftEmpty() {
-        final SentenceInfo s = new SentenceInfo("", "liters of", "please");
+        final Sentence s = sent("", "liters of", "please");
 
         assertSentence(s, "five liters of milk please",                1.0f, 1.0f, "five",            "milk");
         assertSentence(s, "five and a half liters of soy milk please", 1.0f, 1.0f, "five and a half", "soy milk");
@@ -219,7 +211,7 @@ public class SentenceTest {
 
     @Test
     public void test3pRightEmpty() {
-        final SentenceInfo s = new SentenceInfo("i want", "liters of", "");
+        final Sentence s = sent("i want", "liters of", "");
 
         assertSentence(s, "i want five liters of milk",                1.0f, 1.0f, "five",            "milk");
         assertSentence(s, "i want five and a half liters of soy milk", 1.0f, 1.0f, "five and a half", "soy milk");
@@ -239,7 +231,7 @@ public class SentenceTest {
 
     @Test
     public void test3pLeftRightEmpty() {
-        final SentenceInfo s = new SentenceInfo("", "and", "");
+        final Sentence s = sent("", "and", "");
 
         assertSentence(s, "bob and mary",           1.0f, 1.0f, "bob",          "mary");
         assertSentence(s, "bob and mary and simon", 1.0f, 1.0f, "bob",          "mary and simon");
@@ -252,7 +244,7 @@ public class SentenceTest {
 
     @Test
     public void testDuplicateWord() {
-        final SentenceInfo s = new SentenceInfo("how do you do bob");
+        final Sentence s = sent("how do you do bob");
 
         assertSentence(s, "how do you do bob",     1.0f, 1.0f, null, null);
         assertSentence(s, "how does you do bob",   0.8f, 0.9f, null, null);
