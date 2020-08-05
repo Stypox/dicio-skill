@@ -157,13 +157,15 @@ class PartialScoreResult {
         float thisValue = this.value(inputWordCount);
         float otherValue = other.value(inputWordCount);
 
-        // boost matches with more words in capturing groups, but only if not skipped more words
-        if (this.skippedWords == other.skippedWords && this.matchedWords == other.matchedWords) {
+        // boost matches with less words in capturing groups, but only if not skipped more words
+        if (this.skippedWords == other.skippedWords) {
             int sumWordsInCapturingGroups =
                     this.wordsInCapturingGroups + other.wordsInCapturingGroups;
             if (sumWordsInCapturingGroups != 0) {
-                thisValue += 0.05f * this.wordsInCapturingGroups / sumWordsInCapturingGroups;
-                otherValue += 0.05f * other.wordsInCapturingGroups / sumWordsInCapturingGroups;
+                thisValue += 0.025f * (1.0f
+                        - ((float) this.wordsInCapturingGroups) / sumWordsInCapturingGroups);
+                otherValue += 0.025f * (1.0f
+                        - ((float) other.wordsInCapturingGroups) / sumWordsInCapturingGroups);
             }
         }
 

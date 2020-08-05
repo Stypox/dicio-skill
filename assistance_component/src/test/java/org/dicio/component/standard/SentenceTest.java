@@ -250,4 +250,29 @@ public class SentenceTest {
         assertSentence(s, "how does you do bob",   0.8f, 0.9f, null, null);
         assertSentence(s, "how does a you do bob", 0.6f, 0.7f, null, null);
     }
+
+    @Test
+    public void testOptionalFollowedByCapturingGroup() {
+        final Sentence s = new Sentence("", new int[] {0},
+                new Word("open",        false, 1, 1, 3),
+                new Word("the",         false, 2, 2),
+                new Word("application", false, 1, 3),
+                new Word("0",           true,  0, 4));
+
+        assertSentence(s, "open newpipe",                 1.0f, 1.0f, "newpipe", null);
+        assertSentence(s, "open the application newpipe", 1.0f, 1.0f, "newpipe", null);
+        assertSentence(s, "open the newest newpipe",      1.0f, 1.0f, "the newest newpipe", null);
+    }
+
+    @Test
+    public void testCapturingGroupFollowedByOptional() {
+        final Sentence s = new Sentence("", new int[] {0},
+                new Word("buy",    false, 1, 1),
+                new Word("0",      true,  2, 2, 3),
+                new Word("please", false, 1, 3));
+
+        assertSentence(s, "buy please",                   1.0f, 1.0f, "please",   null);
+        assertSentence(s, "buy soy please",               1.0f, 1.0f, "soy",      null);
+        assertSentence(s, "buy soy milk",                 1.0f, 1.0f, "soy milk", null);
+    }
 }

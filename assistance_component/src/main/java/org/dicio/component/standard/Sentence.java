@@ -61,7 +61,7 @@ public class Sentence {
             return new PartialScoreResult(words[wordIndex].getMinimumSkippedWordsToEnd(), 0);
         }
 
-        int foundWordAfterStartInt = foundWordAfterStart ? 1 : 0;
+        final int foundWordAfterStartInt = foundWordAfterStart ? 1 : 0;
         if (memory[wordIndex][inputWordIndex][foundWordAfterStartInt] != null) {
             // clone object to prevent edits
             return new PartialScoreResult(memory[wordIndex][inputWordIndex][foundWordAfterStartInt]);
