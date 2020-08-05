@@ -1,5 +1,9 @@
 package org.dicio.component.standard;
 
+import org.dicio.component.standard.word.BaseWord;
+import org.dicio.component.standard.word.CapturingGroup;
+import org.dicio.component.standard.word.DiacriticsInsensitiveWord;
+import org.dicio.component.standard.word.DiacriticsSensitiveWord;
 import org.dicio.component.util.WordExtractor;
 
 import org.hamcrest.CoreMatchers;
@@ -17,41 +21,41 @@ public class SentenceTest {
 
 
     private static void addAllWords(final List<String> packWords,
-                                    final List<Word> words,
+                                    final List<BaseWord> words,
                                     final int minimumSkippedWordsToEnd) {
         for (int i = 0; i < packWords.size(); ++i) {
-            words.add(new Word(packWords.get(i), false, minimumSkippedWordsToEnd + packWords.size() - i, words.size() + 1));
+            words.add(new DiacriticsSensitiveWord(packWords.get(i), minimumSkippedWordsToEnd + packWords.size() - i, words.size() + 1));
         }
     }
 
     private static void addCapturingGroup(int index,
-                                          final List<Word> words,
+                                          final List<BaseWord> words,
                                           final int minimumSkippedWordsToEnd) {
-        words.add(new Word(Integer.toString(index), true, minimumSkippedWordsToEnd + 2, words.size() + 1));
+        words.add(new CapturingGroup(Integer.toString(index), minimumSkippedWordsToEnd + 2, words.size() + 1));
     }
 
 
     private static Sentence sent(final String pack1) {
-        final List<Word> words = new ArrayList<>();
+        final List<BaseWord> words = new ArrayList<>();
         final List<String> pack1Words = WordExtractor.extractWords(pack1);
 
         addAllWords(pack1Words, words, 0);
-        return new Sentence("", new int[] {0}, words.toArray(new Word[0]));
+        return new Sentence("", new int[] {0}, words.toArray(new BaseWord[0]));
     }
 
     private static Sentence sent(final String pack1, final String pack2) {
-        final List<Word> words = new ArrayList<>();
+        final List<BaseWord> words = new ArrayList<>();
         final List<String> pack1Words = WordExtractor.extractWords(pack1);
         final List<String> pack2Words = WordExtractor.extractWords(pack2);
 
         addAllWords(pack1Words, words, 2 + pack2Words.size());
         addCapturingGroup(0, words, pack2Words.size());
         addAllWords(pack2Words, words, 0);
-        return new Sentence("", new int[] {0}, words.toArray(new Word[0]));
+        return new Sentence("", new int[] {0}, words.toArray(new BaseWord[0]));
     }
 
     private static Sentence sent(final String pack1, final String pack2, final String pack3) {
-        final List<Word> words = new ArrayList<>();
+        final List<BaseWord> words = new ArrayList<>();
         final List<String> pack1Words = WordExtractor.extractWords(pack1);
         final List<String> pack2Words = WordExtractor.extractWords(pack2);
         final List<String> pack3Words = WordExtractor.extractWords(pack3);
@@ -61,7 +65,7 @@ public class SentenceTest {
         addAllWords(pack2Words, words, 2 + pack3Words.size());
         addCapturingGroup(1, words, pack3Words.size());
         addAllWords(pack3Words, words, 0);
-        return new Sentence("", new int[] {0}, words.toArray(new Word[0]));
+        return new Sentence("", new int[] {0}, words.toArray(new BaseWord[0]));
     }
 
 
@@ -254,10 +258,10 @@ public class SentenceTest {
     @Test
     public void testOptionalFollowedByCapturingGroup() {
         final Sentence s = new Sentence("", new int[] {0},
-                new Word("open",        false, 1, 1, 3),
-                new Word("the",         false, 2, 2),
-                new Word("application", false, 1, 3),
-                new Word("0",           true,  0, 4));
+                new DiacriticsSensitiveWord("open",        1, 1, 3),
+                new DiacriticsSensitiveWord("the",         2, 2),
+                new DiacriticsSensitiveWord("application", 1, 3),
+                new CapturingGroup("0",                    0, 4));
 
         assertSentence(s, "open newpipe",                 1.0f, 1.0f, "newpipe", null);
         assertSentence(s, "open the application newpipe", 1.0f, 1.0f, "newpipe", null);
@@ -267,9 +271,9 @@ public class SentenceTest {
     @Test
     public void testCapturingGroupFollowedByOptional() {
         final Sentence s = new Sentence("", new int[] {0},
-                new Word("buy",    false, 1, 1),
-                new Word("0",      true,  2, 2, 3),
-                new Word("please", false, 1, 3));
+                new DiacriticsSensitiveWord("buy",    1, 1),
+                new CapturingGroup("0",               0, 2, 3),
+                new DiacriticsSensitiveWord("please", 0, 3));
 
         assertSentence(s, "buy please",                   1.0f, 1.0f, "please",   null);
         assertSentence(s, "buy soy please",               1.0f, 1.0f, "soy",      null);

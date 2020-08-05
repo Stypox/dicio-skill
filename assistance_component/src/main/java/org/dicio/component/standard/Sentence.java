@@ -1,11 +1,15 @@
 package org.dicio.component.standard;
 
+import org.dicio.component.standard.word.BaseWord;
+import org.dicio.component.standard.word.CapturingGroup;
+import org.dicio.component.standard.word.StringWord;
+
 import java.util.List;
 
 public class Sentence {
     private final String sentenceId;
     private final int[] startingWordIndices;
-    private final Word[] words;
+    private final BaseWord[] words;
 
     private List<String> inputWords;
     private PartialScoreResult[][][] memory;
@@ -14,7 +18,7 @@ public class Sentence {
     // PUBLIC METHODS //
     ////////////////////
 
-    public Sentence(final String sentenceId, final int[] startingWordIndices, final Word... words) {
+    public Sentence(final String sentenceId, final int[] startingWordIndices, final BaseWord... words) {
         this.sentenceId = sentenceId;
         this.startingWordIndices = startingWordIndices;
         this.words = words;
@@ -68,7 +72,7 @@ public class Sentence {
         }
 
         PartialScoreResult result;
-        if (words[wordIndex].isCapturingGroup()) {
+        if (words[wordIndex] instanceof CapturingGroup) {
             result = bestScoreCapturingGroup(wordIndex, inputWordIndex, foundWordAfterStart);
         } else {
             result = bestScoreNormalWord(wordIndex, inputWordIndex, foundWordAfterStart);
@@ -99,7 +103,7 @@ public class Sentence {
                 // keepBest will keep the current (i.e. latest) result in case of equality
                 // so smaller capturing groups are preferred (leading to more specific sentences)
                 result = bestScore(nextIndex, i, true)
-                        .setCapturingGroup(words[wordIndex].toString(),
+                        .setCapturingGroup(((CapturingGroup) words[wordIndex]).getName(),
                                 new InputWordRange(inputWordIndex, i))
                         .keepBest(result, inputWords.size());
             }
@@ -114,7 +118,7 @@ public class Sentence {
         PartialScoreResult result = bestScore(wordIndex, inputWordIndex + 1, foundWordAfterStart)
                 .skipInputWord(foundWordAfterStart);
 
-        if (words[wordIndex].toString().equals(inputWords.get(inputWordIndex))) {
+        if (((StringWord) words[wordIndex]).matches(inputWords.get(inputWordIndex))) {
             for (int nextIndex : words[wordIndex].getNextIndices()) {
                 result = bestScore(nextIndex, inputWordIndex + 1, true)
                         .matchWord()

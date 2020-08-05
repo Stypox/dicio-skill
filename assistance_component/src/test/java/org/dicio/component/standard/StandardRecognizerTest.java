@@ -1,6 +1,9 @@
 package org.dicio.component.standard;
 
 import org.dicio.component.InputRecognizer;
+import org.dicio.component.standard.word.CapturingGroup;
+import org.dicio.component.standard.word.DiacriticsSensitiveWord;
+import org.dicio.component.standard.word.DiacriticsSensitiveWord;
 import org.dicio.component.util.WordExtractor;
 
 import org.junit.Test;
@@ -18,34 +21,34 @@ public class StandardRecognizerTest {
     public static final StandardRecognizerData section_mood = new StandardRecognizerData(
             InputRecognizer.Specificity.high,
             new Sentence("", new int[] {0,},
-                    new Word("how", false, 4, 1, 4), new Word("are", false, 3, 2), new Word("you", false, 2, 3, 7),
-                    new Word("doing", false, 1, 7), new Word("is", false, 3, 5), new Word("it", false, 2, 6),
-                    new Word("going", false, 1, 7)),
+                    new DiacriticsSensitiveWord("how", 4, 1, 4), new DiacriticsSensitiveWord("are", 3, 2), new DiacriticsSensitiveWord("you", 2, 3, 7),
+                    new DiacriticsSensitiveWord("doing", 1, 7), new DiacriticsSensitiveWord("is", 3, 5), new DiacriticsSensitiveWord("it", 2, 6),
+                    new DiacriticsSensitiveWord("going", 1, 7)),
             new Sentence("has_place", new int[] {0,},
-                    new Word("how", false, 6, 1), new Word("is", false, 5, 2), new Word("it", false, 4, 3),
-                    new Word("going", false, 3, 4), new Word("over", false, 2, 5), new Word("there", false, 1, 6)));
+                    new DiacriticsSensitiveWord("how", 6, 1), new DiacriticsSensitiveWord("is", 5, 2), new DiacriticsSensitiveWord("it", 4, 3),
+                    new DiacriticsSensitiveWord("going", 3, 4), new DiacriticsSensitiveWord("over", 2, 5), new DiacriticsSensitiveWord("there", 1, 6)));
 
     public static final StandardRecognizerData section_GPS_navigation = new StandardRecognizerData(
             InputRecognizer.Specificity.medium,
             new Sentence("question", new int[] {0, 1,},
-                    new Word("take", false, 9, 2), new Word("bring", false, 11, 2), new Word("me", false, 10, 3),
-                    new Word("to", false, 9, 4), new Word("place", true, 8, 5, 7, 8), new Word("by", false, 6, 6),
-                    new Word("vehicle", true, 5, 7, 8), new Word("please", false, 4, 8)),
+                    new DiacriticsSensitiveWord("take", 9, 2), new DiacriticsSensitiveWord("bring", 11, 2), new DiacriticsSensitiveWord("me", 10, 3),
+                    new DiacriticsSensitiveWord("to", 9, 4), new CapturingGroup("place", 8, 5, 7, 8), new DiacriticsSensitiveWord("by", 6, 6),
+                    new CapturingGroup("vehicle", 5, 7, 8), new DiacriticsSensitiveWord("please", 4, 8)),
             new Sentence("question", new int[] {0,},
-                    new Word("give", false, 7, 1), new Word("me", false, 6, 2), new Word("directions", false, 5, 3),
-                    new Word("to", false, 4, 4), new Word("place", true, 3, 5, 6), new Word("please", false, 1, 6)),
+                    new DiacriticsSensitiveWord("give", 7, 1), new DiacriticsSensitiveWord("me", 6, 2), new DiacriticsSensitiveWord("directions", 5, 3),
+                    new DiacriticsSensitiveWord("to", 4, 4), new CapturingGroup("place", 3, 5, 6), new DiacriticsSensitiveWord("please", 1, 6)),
             new Sentence("question", new int[] {0,},
-                    new Word("how", false, 9, 1, 2), new Word("do", false, 6, 3), new Word("can", false, 8, 3),
-                    new Word("i", false, 7, 4), new Word("get", false, 6, 5), new Word("to", false, 5, 6),
-                    new Word("place", true, 4, 7)),
+                    new DiacriticsSensitiveWord("how", 9, 1, 2), new DiacriticsSensitiveWord("do", 6, 3), new DiacriticsSensitiveWord("can", 8, 3),
+                    new DiacriticsSensitiveWord("i", 7, 4), new DiacriticsSensitiveWord("get", 6, 5), new DiacriticsSensitiveWord("to", 5, 6),
+                    new CapturingGroup("place", 4, 7)),
             new Sentence("statement", new int[] {0,},
-                    new Word("i", false, 10, 1), new Word("want", false, 9, 2), new Word("to", false, 8, 3),
-                    new Word("go", false, 7, 4), new Word("to", false, 6, 5), new Word("place", true, 5, 6, 8),
-                    new Word("by", false, 3, 7), new Word("vehicle", true, 2, 8)),
+                    new DiacriticsSensitiveWord("i", 10, 1), new DiacriticsSensitiveWord("want", 9, 2), new DiacriticsSensitiveWord("to", 8, 3),
+                    new DiacriticsSensitiveWord("go", 7, 4), new DiacriticsSensitiveWord("to", 6, 5), new CapturingGroup("place", 5, 6, 8),
+                    new DiacriticsSensitiveWord("by", 3, 7), new CapturingGroup("vehicle", 2, 8)),
             new Sentence("statement", new int[] {0,},
-                    new Word("place", true, 10, 1), new Word("is", false, 8, 2), new Word("the", false, 7, 3),
-                    new Word("place", false, 6, 4), new Word("i", false, 5, 5), new Word("want", false, 4, 6),
-                    new Word("to", false, 3, 7), new Word("go", false, 2, 8), new Word("to", false, 1, 9)));
+                    new CapturingGroup("place", 10, 1), new DiacriticsSensitiveWord("is", 8, 2), new DiacriticsSensitiveWord("the", 7, 3),
+                    new DiacriticsSensitiveWord("place", 6, 4), new DiacriticsSensitiveWord("i", 5, 5), new DiacriticsSensitiveWord("want", 4, 6),
+                    new DiacriticsSensitiveWord("to", 3, 7), new DiacriticsSensitiveWord("go", 2, 8), new DiacriticsSensitiveWord("to", 1, 9)));
 
 
     private static void assertRecognized(final StandardRecognizer sr, final String input,
