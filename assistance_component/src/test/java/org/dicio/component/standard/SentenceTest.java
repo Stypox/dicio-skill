@@ -20,18 +20,39 @@ public class SentenceTest {
     static final float floatEqualsDelta = 0.0001f;
 
 
+    private static DiacriticsSensitiveWord dsw(final String value,
+                                               final int minimumSkippedWordsToEnd,
+                                               final int... nextIndices) {
+        return new DiacriticsSensitiveWord(value, minimumSkippedWordsToEnd, nextIndices);
+    }
+
+    private static DiacriticsInsensitiveWord diw(final String value,
+                                                 final int minimumSkippedWordsToEnd,
+                                                 final int... nextIndices) {
+        return new DiacriticsInsensitiveWord(DiacriticsInsensitiveWord.getCollationKey(value),
+                minimumSkippedWordsToEnd, nextIndices);
+    }
+
+    private static CapturingGroup capt(final String name,
+                                       final int minimumSkippedWordsToEnd,
+                                       final int... nextIndices) {
+        return new CapturingGroup(name, minimumSkippedWordsToEnd, nextIndices);
+    }
+
     private static void addAllWords(final List<String> packWords,
                                     final List<BaseWord> words,
                                     final int minimumSkippedWordsToEnd) {
         for (int i = 0; i < packWords.size(); ++i) {
-            words.add(new DiacriticsSensitiveWord(packWords.get(i), minimumSkippedWordsToEnd + packWords.size() - i, words.size() + 1));
+            words.add(dsw(packWords.get(i),
+                    minimumSkippedWordsToEnd + packWords.size() - i, words.size() + 1));
         }
     }
 
     private static void addCapturingGroup(int index,
                                           final List<BaseWord> words,
                                           final int minimumSkippedWordsToEnd) {
-        words.add(new CapturingGroup(Integer.toString(index), minimumSkippedWordsToEnd + 2, words.size() + 1));
+        words.add(capt(Integer.toString(index),
+                minimumSkippedWordsToEnd + 2, words.size() + 1));
     }
 
 
@@ -259,10 +280,10 @@ public class SentenceTest {
     @Test
     public void testOptionalFollowedByCapturingGroup() {
         final Sentence s = new Sentence("", new int[] {0},
-                new DiacriticsSensitiveWord("open",        1, 1, 3),
-                new DiacriticsSensitiveWord("the",         2, 2),
-                new DiacriticsSensitiveWord("application", 1, 3),
-                new CapturingGroup("0",                    0, 4));
+                dsw("open",        1, 1, 3),
+                dsw("the",         2, 2),
+                dsw("application", 1, 3),
+                capt("0",          0, 4));
 
         assertSentence(s, "open newpipe",                 1.0f, 1.0f, "newpipe", null);
         assertSentence(s, "open the application newpipe", 1.0f, 1.0f, "newpipe", null);
@@ -272,12 +293,23 @@ public class SentenceTest {
     @Test
     public void testCapturingGroupFollowedByOptional() {
         final Sentence s = new Sentence("", new int[] {0},
-                new DiacriticsSensitiveWord("buy",    1, 1),
-                new CapturingGroup("0",               0, 2, 3),
-                new DiacriticsSensitiveWord("please", 0, 3));
+                dsw("buy",    1, 1),
+                capt("0",     0, 2, 3),
+                dsw("please", 0, 3));
 
-        assertSentence(s, "buy please",                   1.0f, 1.0f, "please",   null);
-        assertSentence(s, "buy soy please",               1.0f, 1.0f, "soy",      null);
-        assertSentence(s, "buy soy milk",                 1.0f, 1.0f, "soy milk", null);
+        assertSentence(s, "buy please",     1.0f, 1.0f, "please",   null);
+        assertSentence(s, "buy soy please", 1.0f, 1.0f, "soy",      null);
+        assertSentence(s, "buy soy milk",   1.0f, 1.0f, "soy milk", null);
+    }
+
+    @Test
+    public void testOptionalCapturingGroup() {
+        final Sentence s = new Sentence("", new int[] {0},
+                dsw("weather", 1, 1, 2),
+                capt("0",      0, 2));
+
+        assertSentence(s, "weather",          1.0f, 1.0f, null,       null);
+        assertSentence(s, "weather new",      1.0f, 1.0f, "new",      null);
+        assertSentence(s, "weather new york", 1.0f, 1.0f, "new york", null);
     }
 }
