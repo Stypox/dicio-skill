@@ -6,7 +6,9 @@ import java.util.Locale;
 
 public final class DiacriticsInsensitiveWord extends StringWord {
 
-    private static Collator getCollator() {
+    private static final Collator collator = buildCollator();
+
+    private static Collator buildCollator() {
         final Collator collator = Collator.getInstance(Locale.ENGLISH);
         collator.setStrength(Collator.PRIMARY);
         // note: this is not FULL_COMPOSITION, some accented characters could not be considered the same
@@ -14,7 +16,9 @@ public final class DiacriticsInsensitiveWord extends StringWord {
         return collator;
     }
 
-    private static final Collator collator = getCollator();
+    public static byte[] getCollationKey(final String inputWord) {
+        return collator.getCollationKey(inputWord).toByteArray();
+    }
 
 
     private final byte[] valueCollationKey;
@@ -41,7 +45,7 @@ public final class DiacriticsInsensitiveWord extends StringWord {
     }
 
     @Override
-    public boolean matches(final String inputWord) {
-        return Arrays.equals(valueCollationKey, collator.getCollationKey(inputWord).toByteArray());
+    public boolean matches(final String inputWord, final byte[] inputWordCollationKey) {
+        return Arrays.equals(valueCollationKey, inputWordCollationKey);
     }
 }

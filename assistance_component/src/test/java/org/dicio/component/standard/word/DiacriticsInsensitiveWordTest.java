@@ -27,14 +27,18 @@ public class DiacriticsInsensitiveWordTest {
     private void assertMatches(final String value, final String... inputWords) {
         final DiacriticsInsensitiveWord diacriticsInsensitiveWord = diw(value);
         for (final String word : inputWords) {
-            assertTrue(value + " can't match " + word, diacriticsInsensitiveWord.matches(word));
+            assertTrue(value + " should match " + word,
+                    diacriticsInsensitiveWord.matches(word,
+                            DiacriticsInsensitiveWord.getCollationKey(word)));
         }
     }
 
     private void assertNotMatches(final String value, final String... inputWords) {
         final DiacriticsInsensitiveWord diacriticsInsensitiveWord = diw(value);
         for (final String word : inputWords) {
-            assertFalse(diacriticsInsensitiveWord.matches(word));
+            assertFalse(value + " should not match " + word,
+                    diacriticsInsensitiveWord.matches(word,
+                            DiacriticsInsensitiveWord.getCollationKey(word)));
         }
     }
 

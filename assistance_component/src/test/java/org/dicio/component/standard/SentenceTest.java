@@ -90,7 +90,8 @@ public class SentenceTest {
                                        final float a, final float b,
                                        final String captGr0, final String captGr1) {
         final List<String> inputWords = WordExtractor.extractWords(input);
-        final PartialScoreResult scoreResult = s.score(inputWords);
+        final List<byte[]> inputWordCollationKeys = WordExtractor.getCollationKeys(inputWords);
+        final PartialScoreResult scoreResult = s.score(inputWords, inputWordCollationKeys);
         final float score = scoreResult.value(inputWords.size());
 
         if (a == b) {

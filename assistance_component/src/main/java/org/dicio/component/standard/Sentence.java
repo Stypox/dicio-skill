@@ -12,6 +12,7 @@ public class Sentence {
     private final BaseWord[] words;
 
     private List<String> inputWords;
+    private List<byte[]> inputWordCollationKeys;
     private PartialScoreResult[][][] memory;
 
     ////////////////////
@@ -25,9 +26,11 @@ public class Sentence {
     }
 
 
-    public PartialScoreResult score(final List<String> inputWords) {
+    public PartialScoreResult score(final List<String> inputWords,
+                                    final List<byte[]> inputWordCollationKeys) {
         this.inputWords = inputWords;
-        memory = new PartialScoreResult[words.length][inputWords.size()][2];
+        this.inputWordCollationKeys = inputWordCollationKeys;
+        this.memory = new PartialScoreResult[words.length][inputWords.size()][2];
         final int inputWordCount = inputWords.size();
 
         PartialScoreResult bestResult = bestScore(startingWordIndices[0], 0, false);
@@ -38,7 +41,8 @@ public class Sentence {
 
         // cleanup to prevent memory leaks
         this.inputWords = null;
-        memory = null;
+        this.inputWordCollationKeys = null;
+        this.memory = null;
         return bestResult;
     }
 
@@ -68,10 +72,11 @@ public class Sentence {
         final int foundWordAfterStartInt = foundWordAfterStart ? 1 : 0;
         if (memory[wordIndex][inputWordIndex][foundWordAfterStartInt] != null) {
             // clone object to prevent edits
-            return new PartialScoreResult(memory[wordIndex][inputWordIndex][foundWordAfterStartInt]);
+            return new PartialScoreResult(
+                    memory[wordIndex][inputWordIndex][foundWordAfterStartInt]);
         }
 
-        PartialScoreResult result;
+        final PartialScoreResult result;
         if (words[wordIndex] instanceof CapturingGroup) {
             result = bestScoreCapturingGroup(wordIndex, inputWordIndex, foundWordAfterStart);
         } else {
@@ -118,7 +123,8 @@ public class Sentence {
         PartialScoreResult result = bestScore(wordIndex, inputWordIndex + 1, foundWordAfterStart)
                 .skipInputWord(foundWordAfterStart);
 
-        if (((StringWord) words[wordIndex]).matches(inputWords.get(inputWordIndex))) {
+        if (((StringWord) words[wordIndex]).matches(
+                inputWords.get(inputWordIndex), inputWordCollationKeys.get(inputWordIndex))) {
             for (int nextIndex : words[wordIndex].getNextIndices()) {
                 result = bestScore(nextIndex, inputWordIndex + 1, true)
                         .matchWord()

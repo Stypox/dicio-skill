@@ -25,7 +25,7 @@ public final class DiacriticsSensitiveWord extends StringWord {
     }
 
     @Override
-    public boolean matches(final String inputWord) {
-        return inputWord.equals(value);
+    public boolean matches(final String inputWord, final byte[] inputWordCollationKey) {
+        return value.equals(inputWord);
     }
 }

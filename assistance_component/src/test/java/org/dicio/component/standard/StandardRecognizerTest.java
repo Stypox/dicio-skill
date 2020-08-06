@@ -3,7 +3,6 @@ package org.dicio.component.standard;
 import org.dicio.component.InputRecognizer;
 import org.dicio.component.standard.word.CapturingGroup;
 import org.dicio.component.standard.word.DiacriticsSensitiveWord;
-import org.dicio.component.standard.word.DiacriticsSensitiveWord;
 import org.dicio.component.util.WordExtractor;
 
 import org.junit.Test;
@@ -56,7 +55,8 @@ public class StandardRecognizerTest {
                                          final float a, final float b,
                                          final Map<String, String> capturingGroups) {
         final List<String> inputWords = WordExtractor.extractWords(input);
-        sr.setInput(input, inputWords);
+        final List<byte[]> inputWordCollationKeys = WordExtractor.getCollationKeys(inputWords);
+        sr.setInput(input, inputWords, inputWordCollationKeys);
         final float score = sr.score();
         final StandardResult result = sr.getResult();
         sr.cleanup();

@@ -1,6 +1,7 @@
 package org.dicio.component.util;
 
 import org.dicio.component.standard.InputWordRange;
+import org.dicio.component.standard.word.DiacriticsInsensitiveWord;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,14 @@ public class WordExtractor {
         }
 
         return inputWords;
+    }
+
+    public static List<byte[]> getCollationKeys(final List<String> inputWords) {
+        final List<byte[]> inputWordCollationKeys = new ArrayList<>(inputWords.size());
+        for (final String inputWord : inputWords) {
+            inputWordCollationKeys.add(DiacriticsInsensitiveWord.getCollationKey(inputWord));
+        }
+        return inputWordCollationKeys;
     }
 
     public static String extractCapturingGroup(final String input, final InputWordRange range) {

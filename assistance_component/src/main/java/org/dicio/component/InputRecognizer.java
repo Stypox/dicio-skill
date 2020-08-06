@@ -30,11 +30,15 @@ public interface InputRecognizer<ResultType> {
      * to be used when {@link #score() score()} is called
      * @param input raw input from the user
      * @param inputWords normalized input split into words
+     * @param inputWordCollationKeys the collation keys for all of the input words (in the same
+     *                               order), needed for diacritics-insensitive matching, built by
+     *                               passing inputWords to
+     *                               {@link org.dicio.component.util.WordExtractor#getCollationKeys(List)}
      */
-    void setInput(String input, List<String> inputWords);
+    void setInput(String input, List<String> inputWords, List<byte[]> inputWordCollationKeys);
 
     /**
-     * The score of the input previously set with {@link #setInput(String, List) setInput()}
+     * The score of the input previously set with {@link #setInput(String, List, List) setInput()}
      * for this input recognizer
      * @return a number in range [0.0, 1.0]
      */
@@ -42,7 +46,7 @@ public interface InputRecognizer<ResultType> {
 
     /**
      * If this input recognizer has the highest score, this function is called to generate a result
-     * based on the input previously set with {@link #setInput(String, List) setInput()}
+     * based on the input previously set with {@link #setInput(String, List, List) setInput()}
      * @return a result useful for the next step of the computation
      */
     ResultType getResult();

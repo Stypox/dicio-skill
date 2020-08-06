@@ -1,7 +1,5 @@
 package org.dicio.component.standard.word;
 
-import java.text.Collator;
-
 public abstract class StringWord extends BaseWord {
 
     /**
@@ -20,5 +18,13 @@ public abstract class StringWord extends BaseWord {
         super(minimumSkippedWordsToEnd, nextIndices);
     }
 
-    public abstract boolean matches(String inputWord);
+    /**
+     * Whether this StringWord matches the provided input word.
+     * @param inputWord the input word in string format
+     * @param inputWordCollationKey the collation key of the input word, needed for
+     *                              diacritics-insensitive matching, built with
+     *                              {@link DiacriticsInsensitiveWord#getCollationKey(String)}
+     * @return whether the input words matches this word or not
+     */
+    public abstract boolean matches(String inputWord, byte[] inputWordCollationKey);
 }
