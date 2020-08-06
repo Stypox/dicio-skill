@@ -2,8 +2,10 @@ package org.dicio.component.util;
 
 import org.dicio.component.standard.InputWordRange;
 
+import org.dicio.component.standard.word.DiacriticsInsensitiveWord;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -16,6 +18,18 @@ public class WordExtractorTest {
         assertArrayEquals(expectedWords, actualWords.toArray());
     }
 
+    public static void assertCollationKey(final String baseWord, final String... inputs) {
+        final List<byte[]> inputCollationKeys =
+                WordExtractor.getCollationKeys(Arrays.asList(inputs));
+        final byte[] baseCollationKey = DiacriticsInsensitiveWord.getCollationKey(baseWord);
+
+        assertEquals(inputs.length, inputCollationKeys.size());
+        for (int i = 0; i < inputs.length; i++) {
+            assertArrayEquals("Collation key is different from that of " + baseWord
+                    + ": " + inputs[i], baseCollationKey, inputCollationKeys.get(i));
+        }
+    }
+
     private static void assertExtractedCapturingGroup(final String left,
                                                       final String output,
                                                       final String right,
@@ -26,6 +40,7 @@ public class WordExtractorTest {
                 WordExtractor.extractCapturingGroup(input, new InputWordRange(from, to)));
     }
 
+
     @Test
     public void extractWordsTest() {
         assertExtractedWords("213heÉlo? \n\t .°- \nHOWè@ç§Ù\n+", "heélo", "howè", "ç", "ù");
@@ -35,6 +50,13 @@ public class WordExtractorTest {
         assertExtractedWords("à è ì ò ù À È Ì Ò Ù", "à","è","ì","ò","ù","à","è","ì","ò","ù");
         assertExtractedWords(" \r\n \f\n \r\t\t+-_");
         assertExtractedWords("");
+    }
+
+    @Test
+    public void getCollationKeysTest() {
+        assertCollationKey("aeiou", "aeiou", "àeiòu", "àéÌOù", "AÉIOU");
+        assertCollationKey("sS",    "ss", "ß");
+        assertCollationKey("ßèç",   "ssec", "Sseç", "sSèc", "SSèç", "sséc", "sSéç", "ßec", "ßeç", "ßèc", "ßèç", "ßéc", "ßéç");
     }
 
     @Test
