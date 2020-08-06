@@ -280,8 +280,8 @@ public class SentenceTest {
     @Test
     public void testOptionalFollowedByCapturingGroup() {
         final Sentence s = new Sentence("", new int[] {0},
-                dsw("open",        1, 1, 3),
-                dsw("the",         2, 2),
+                diw("open",        1, 1, 3),
+                diw("the",         2, 2),
                 dsw("application", 1, 3),
                 capt("0",          0, 4));
 
@@ -295,7 +295,7 @@ public class SentenceTest {
         final Sentence s = new Sentence("", new int[] {0},
                 dsw("buy",    1, 1),
                 capt("0",     0, 2, 3),
-                dsw("please", 0, 3));
+                diw("please", 0, 3));
 
         assertSentence(s, "buy please",     1.0f, 1.0f, "please",   null);
         assertSentence(s, "buy soy please", 1.0f, 1.0f, "soy",      null);
@@ -305,7 +305,7 @@ public class SentenceTest {
     @Test
     public void testOptionalCapturingGroup() {
         final Sentence s = new Sentence("", new int[] {0},
-                dsw("weather", 1, 1, 2),
+                diw("weather", 1, 1, 2),
                 capt("0",      0, 2));
 
         assertSentence(s, "weather",          1.0f, 1.0f, null,       null);
