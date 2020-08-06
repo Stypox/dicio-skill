@@ -1,44 +1,33 @@
 package org.dicio.component.standard.word;
 
-import org.junit.BeforeClass;
+import org.dicio.component.util.WordExtractor;
 import org.junit.Test;
 
-import java.text.Collator;
-import java.util.Locale;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class DiacriticsInsensitiveWordTest {
 
-    private static Collator collator;
-
-    @BeforeClass
-    public static void setupCollator() {
-        collator = Collator.getInstance(Locale.ENGLISH);
-        collator.setStrength(Collator.PRIMARY);
-        collator.setDecomposition(Collator.CANONICAL_DECOMPOSITION);
-    }
-
 
     private DiacriticsInsensitiveWord diw(final String value) {
-        return new DiacriticsInsensitiveWord(collator.getCollationKey(value).toByteArray(), 0);
+        return new DiacriticsInsensitiveWord(WordExtractor.nfkdNormalizeWord(value), 0);
     }
 
     private void assertMatches(final String value, final String... inputWords) {
         final DiacriticsInsensitiveWord diacriticsInsensitiveWord = diw(value);
         for (final String word : inputWords) {
-            assertTrue(value + " should match " + word,
-                    diacriticsInsensitiveWord.matches(word,
-                            DiacriticsInsensitiveWord.getCollationKey(word)));
+            assertTrue(value + " should match " + word
+                            + " (normalized: " + WordExtractor.nfkdNormalizeWord(word) + ")",
+                    diacriticsInsensitiveWord.matches(word, WordExtractor.nfkdNormalizeWord(word)));
         }
     }
 
     private void assertNotMatches(final String value, final String... inputWords) {
         final DiacriticsInsensitiveWord diacriticsInsensitiveWord = diw(value);
         for (final String word : inputWords) {
-            assertFalse(value + " should not match " + word,
-                    diacriticsInsensitiveWord.matches(word,
-                            DiacriticsInsensitiveWord.getCollationKey(word)));
+            assertFalse(value + " should not match " + word
+                            + " (normalized: " + WordExtractor.nfkdNormalizeWord(word) + ")",
+                    diacriticsInsensitiveWord.matches(word, WordExtractor.nfkdNormalizeWord(word)));
         }
     }
 
@@ -46,12 +35,11 @@ public class DiacriticsInsensitiveWordTest {
     @Test
     public void testMatches() {
         assertMatches("hello", "hèllo", "hellò", "héllò");
-        assertMatches("ssùlìc", "ßùliç", "ssulic", "ßulìc");
+        assertMatches("ùlìc", "ùliç", "ulic", "ulìc");
     }
 
     @Test
     public void testNotMatches() {
-        // note: ħ and ł do not match, even with full decompositor
         assertNotMatches("hello", "ħello", "hèłlo", "ħéłłò");
         assertNotMatches("ciao", "ciau", "chiao", "hiao", "chao");
     }

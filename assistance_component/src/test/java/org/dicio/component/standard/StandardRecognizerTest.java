@@ -55,8 +55,8 @@ public class StandardRecognizerTest {
                                          final float a, final float b,
                                          final Map<String, String> capturingGroups) {
         final List<String> inputWords = WordExtractor.extractWords(input);
-        final List<byte[]> inputWordCollationKeys = WordExtractor.getCollationKeys(inputWords);
-        sr.setInput(input, inputWords, inputWordCollationKeys);
+        final List<String> normalizedInputWords = WordExtractor.normalizeWords(inputWords);
+        sr.setInput(input, inputWords, normalizedInputWords);
         final float score = sr.score();
         final StandardResult result = sr.getResult();
         sr.cleanup();

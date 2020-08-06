@@ -12,7 +12,7 @@ public class Sentence {
     private final BaseWord[] words;
 
     private List<String> inputWords;
-    private List<byte[]> inputWordCollationKeys;
+    private List<String> normalizedInputWords;
     private PartialScoreResult[][][] memory;
 
     ////////////////////
@@ -27,9 +27,9 @@ public class Sentence {
 
 
     public PartialScoreResult score(final List<String> inputWords,
-                                    final List<byte[]> inputWordCollationKeys) {
+                                    final List<String> normalizedInputWords) {
         this.inputWords = inputWords;
-        this.inputWordCollationKeys = inputWordCollationKeys;
+        this.normalizedInputWords = normalizedInputWords;
         this.memory = new PartialScoreResult[words.length][inputWords.size()][2];
         final int inputWordCount = inputWords.size();
 
@@ -41,7 +41,7 @@ public class Sentence {
 
         // cleanup to prevent memory leaks
         this.inputWords = null;
-        this.inputWordCollationKeys = null;
+        this.normalizedInputWords = null;
         this.memory = null;
         return bestResult;
     }
@@ -124,7 +124,7 @@ public class Sentence {
                 .skipInputWord(foundWordAfterStart);
 
         if (((StringWord) words[wordIndex]).matches(
-                inputWords.get(inputWordIndex), inputWordCollationKeys.get(inputWordIndex))) {
+                inputWords.get(inputWordIndex), normalizedInputWords.get(inputWordIndex))) {
             for (int nextIndex : words[wordIndex].getNextIndices()) {
                 result = bestScore(nextIndex, inputWordIndex + 1, true)
                         .matchWord()

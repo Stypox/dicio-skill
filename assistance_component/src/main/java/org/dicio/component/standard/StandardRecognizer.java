@@ -9,7 +9,7 @@ public class StandardRecognizer implements InputRecognizer<StandardResult> {
     private final StandardRecognizerData data;
     private String input;
     private List<String> inputWords;
-    private List<byte[]> inputWordCollationKeys;
+    private List<String> normalizedInputWords;
 
     private PartialScoreResult bestResultSoFar;
     private String bestSentenceIdSoFar;
@@ -22,7 +22,7 @@ public class StandardRecognizer implements InputRecognizer<StandardResult> {
     public StandardRecognizer(final StandardRecognizerData data) {
         this.data = data;
         this.inputWords = Collections.emptyList();
-        this.inputWordCollationKeys = Collections.emptyList();
+        this.normalizedInputWords = Collections.emptyList();
     }
 
     public StandardRecognizer(final InputRecognizer.Specificity specificity,
@@ -43,20 +43,20 @@ public class StandardRecognizer implements InputRecognizer<StandardResult> {
     @Override
     public void setInput(final String input,
                          final List<String> inputWords,
-                         final List<byte[]> inputWordCollationKeys) {
+                         final List<String> normalizedInputWords) {
 
         this.input = input;
         this.inputWords = inputWords;
-        this.inputWordCollationKeys = inputWordCollationKeys;
+        this.normalizedInputWords = normalizedInputWords;
     }
 
     @Override
     public float score() {
-        bestResultSoFar = data.getSentences()[0].score(inputWords, inputWordCollationKeys);
+        bestResultSoFar = data.getSentences()[0].score(inputWords, normalizedInputWords);
         bestSentenceIdSoFar = data.getSentences()[0].getSentenceId();
         for (int i = 1; i < data.getSentences().length; ++i) {
             final PartialScoreResult result =
-                    data.getSentences()[i].score(inputWords, inputWordCollationKeys);
+                    data.getSentences()[i].score(inputWords, normalizedInputWords);
             if (result.value(inputWords.size()) > bestResultSoFar.value(inputWords.size())) {
                 bestResultSoFar = result;
                 bestSentenceIdSoFar = data.getSentences()[i].getSentenceId();
@@ -75,7 +75,7 @@ public class StandardRecognizer implements InputRecognizer<StandardResult> {
     public void cleanup() {
         input = null;
         inputWords = null;
-        inputWordCollationKeys = null;
+        normalizedInputWords = null;
         bestResultSoFar = null;
         bestSentenceIdSoFar = null;
     }

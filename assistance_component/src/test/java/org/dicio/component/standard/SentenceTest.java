@@ -29,7 +29,7 @@ public class SentenceTest {
     private static DiacriticsInsensitiveWord diw(final String value,
                                                  final int minimumSkippedWordsToEnd,
                                                  final int... nextIndices) {
-        return new DiacriticsInsensitiveWord(DiacriticsInsensitiveWord.getCollationKey(value),
+        return new DiacriticsInsensitiveWord(WordExtractor.nfkdNormalizeWord(value),
                 minimumSkippedWordsToEnd, nextIndices);
     }
 
@@ -111,8 +111,8 @@ public class SentenceTest {
                                        final float a, final float b,
                                        final String captGr0, final String captGr1) {
         final List<String> inputWords = WordExtractor.extractWords(input);
-        final List<byte[]> inputWordCollationKeys = WordExtractor.getCollationKeys(inputWords);
-        final PartialScoreResult scoreResult = s.score(inputWords, inputWordCollationKeys);
+        final List<String> normalizedInputWords = WordExtractor.normalizeWords(inputWords);
+        final PartialScoreResult scoreResult = s.score(inputWords, normalizedInputWords);
         final float score = scoreResult.value(inputWords.size());
 
         if (a == b) {

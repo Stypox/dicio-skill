@@ -3,6 +3,7 @@ package org.dicio.component.util;
 import org.dicio.component.standard.InputWordRange;
 import org.dicio.component.standard.word.DiacriticsInsensitiveWord;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -10,6 +11,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class WordExtractor {
+
+    private static final Pattern diacriticalMarksRemover =
+            Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
 
     private WordExtractor() {
     }
@@ -28,9 +32,9 @@ public class WordExtractor {
 
         final List<String> inputWords = new ArrayList<>();
         for(final String word : splitInput) {
-            final String normalized = normalizeWord(word);
-            if (normalized != null) {
-                inputWords.add(normalized);
+            if (word != null && !word.isEmpty()) {
+                // TODO should this be locale-sensitive?
+                inputWords.add(word.toLowerCase(Locale.ENGLISH));
             }
         }
 
@@ -38,17 +42,27 @@ public class WordExtractor {
     }
 
     /**
-     * Builds the list of collation keys for the provided input words using
-     * {@link DiacriticsInsensitiveWord#getCollationKey(String)}
-     * @param inputWords the lowercase words to build the collation key list from
-     * @return the collation keys in order
+     * Builds the list of the unicode NFKD normalized values for the input words using
+     * {@link #nfkdNormalizeWord(String)}
+     * @param inputWords the lowercase words to normalize
+     * @return the normalized words in order
      */
-    public static List<byte[]> getCollationKeys(final List<String> inputWords) {
-        final List<byte[]> inputWordCollationKeys = new ArrayList<>(inputWords.size());
+    public static List<String> normalizeWords(final List<String> inputWords) {
+        final List<String> normalizedInputWords = new ArrayList<>(inputWords.size());
         for (final String inputWord : inputWords) {
-            inputWordCollationKeys.add(DiacriticsInsensitiveWord.getCollationKey(inputWord));
+            normalizedInputWords.add(nfkdNormalizeWord(inputWord));
         }
-        return inputWordCollationKeys;
+        return normalizedInputWords;
+    }
+
+    /**
+     * @param word a lowercase string
+     * @return the unicode NFKD normalized value for the provided word
+     * @implNote the normalization process could be slow
+     */
+    public static String nfkdNormalizeWord(final String word) {
+        final String normalized = Normalizer.normalize(word, Normalizer.Form.NFKD);
+        return diacriticalMarksRemover.matcher(normalized).replaceAll("");
     }
 
     /**
@@ -72,17 +86,5 @@ public class WordExtractor {
         } else {
             return null; // unreachable, hopefully
         }
-    }
-
-    /**
-     * @param word any string
-     * @return the word to lowercase and null if the word is null or empty.
-     */
-    private static String normalizeWord(final String word) {
-        if(word == null || word.isEmpty()) {
-            return null;
-        }
-
-        return word.toLowerCase(Locale.ENGLISH);
     }
 }

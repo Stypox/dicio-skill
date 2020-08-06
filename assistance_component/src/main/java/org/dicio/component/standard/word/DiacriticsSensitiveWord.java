@@ -9,7 +9,7 @@ public final class DiacriticsSensitiveWord extends StringWord {
      * diacritics and accents will be checked (see e.g. CTRL+F -> Match Diacritics in Firefox). For
      * diacritics insensitive matching see {@link DiacriticsInsensitiveWord}.
      *
-     * @param value the value of the word, made of only letters
+     * @param value the value of the word, made of only unicode letters
      * @param minimumSkippedWordsToEnd the minimum number of subsequent words that have to be
      *                                 skipped to reach the end of the sentence. Used in case the
      *                                 end of input is reached on this word. Capturing groups count
@@ -25,7 +25,7 @@ public final class DiacriticsSensitiveWord extends StringWord {
     }
 
     @Override
-    public boolean matches(final String inputWord, final byte[] inputWordCollationKey) {
+    public boolean matches(final String inputWord, final String normalizedInputWord) {
         return value.equals(inputWord);
     }
 }

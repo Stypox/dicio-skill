@@ -1,35 +1,17 @@
 package org.dicio.component.standard.word;
 
-import java.text.Collator;
-import java.util.Arrays;
-import java.util.Locale;
-
 public final class DiacriticsInsensitiveWord extends StringWord {
 
-    private static final Collator collator = buildCollator();
-
-    private static Collator buildCollator() {
-        final Collator collator = Collator.getInstance(Locale.ENGLISH);
-        collator.setStrength(Collator.PRIMARY);
-        // note: this is not FULL_COMPOSITION, some accented characters could not be considered the same
-        collator.setDecomposition(Collator.CANONICAL_DECOMPOSITION);
-        return collator;
-    }
-
-    public static byte[] getCollationKey(final String inputWord) {
-        return collator.getCollationKey(inputWord).toByteArray();
-    }
-
-
-    private final byte[] valueCollationKey;
+    private final String normalizedValue;
 
     /**
      * A word in a sentence with the indices of all possible subsequent words. When matching,
-     * diacritics and accents will be checked (see e.g. CTRL+F -> Match Diacritics in Firefox). For
-     * diacritics insensitive matching see {@link DiacriticsInsensitiveWord}.
+     * diacritics and accents will not be checked (see e.g. CTRL+F -> Match Diacritics in Firefox).
+     * For diacritics-sensitive matching see {@link DiacriticsSensitiveWord}.
      *
-     * @param valueCollationKey a byte array containing the pre-calculated collation key of the
-     *                          value for this word, built under the {@link Locale#ENGLISH} locale
+     * @param normalizedValue the unicode NFKD normalized value for this word. Use
+     *      *                 {@link org.dicio.component.util.WordExtractor#nfkdNormalizeWord(String)}
+     *      *                 to NFKD normalize a word.
      * @param minimumSkippedWordsToEnd the minimum number of subsequent words that have to be
      *                                 skipped to reach the end of the sentence. Used in case the
      *                                 end of input is reached on this word. Capturing groups count
@@ -37,15 +19,15 @@ public final class DiacriticsInsensitiveWord extends StringWord {
      * @param nextIndices the indices of all possible subsequent words in the owning sentence; it
      *                    must always contain a value; use the length of the word array to represent
      */
-    public DiacriticsInsensitiveWord(final byte[] valueCollationKey,
+    public DiacriticsInsensitiveWord(final String normalizedValue,
                                      final int minimumSkippedWordsToEnd,
                                      final int... nextIndices) {
         super(minimumSkippedWordsToEnd, nextIndices);
-        this.valueCollationKey = valueCollationKey;
+        this.normalizedValue = normalizedValue;
     }
 
     @Override
-    public boolean matches(final String inputWord, final byte[] inputWordCollationKey) {
-        return Arrays.equals(valueCollationKey, inputWordCollationKey);
+    public boolean matches(final String inputWord, final String normalizedInputWord) {
+        return normalizedValue.equals(normalizedInputWord);
     }
 }

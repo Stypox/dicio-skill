@@ -19,12 +19,11 @@ public abstract class StringWord extends BaseWord {
     }
 
     /**
-     * Whether this StringWord matches the provided input word.
-     * @param inputWord the input word in string format
-     * @param inputWordCollationKey the collation key of the input word, needed for
-     *                              diacritics-insensitive matching, built with
-     *                              {@link DiacriticsInsensitiveWord#getCollationKey(String)}
-     * @return whether the input words matches this word or not
+     * @param inputWord the input word, made of only unicode letters
+     * @param normalizedInputWord the unicode NFKD normalized value for the input word. Use
+     *                            {@link org.dicio.component.util.WordExtractor#nfkdNormalizeWord(String)}
+     *                            to NFKD normalize a word.
+     * @return whether the input word matches this word or not
      */
-    public abstract boolean matches(String inputWord, byte[] inputWordCollationKey);
+    public abstract boolean matches(String inputWord, String normalizedInputWord);
 }

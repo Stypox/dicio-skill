@@ -2,7 +2,6 @@ package org.dicio.component.util;
 
 import org.dicio.component.standard.InputWordRange;
 
-import org.dicio.component.standard.word.DiacriticsInsensitiveWord;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -18,15 +17,15 @@ public class WordExtractorTest {
         assertArrayEquals(expectedWords, actualWords.toArray());
     }
 
-    public static void assertCollationKey(final String baseWord, final String... inputs) {
-        final List<byte[]> inputCollationKeys =
-                WordExtractor.getCollationKeys(Arrays.asList(inputs));
-        final byte[] baseCollationKey = DiacriticsInsensitiveWord.getCollationKey(baseWord);
+    public static void assertNormalized(final String baseWord, final String... inputs) {
+        final List<String> normalizedInputs =
+                WordExtractor.normalizeWords(Arrays.asList(inputs));
+        final String baseCollationKey = WordExtractor.nfkdNormalizeWord(baseWord);
 
-        assertEquals(inputs.length, inputCollationKeys.size());
+        assertEquals(inputs.length, normalizedInputs.size());
         for (int i = 0; i < inputs.length; i++) {
-            assertArrayEquals("Collation key is different from that of " + baseWord
-                    + ": " + inputs[i], baseCollationKey, inputCollationKeys.get(i));
+            assertEquals("Normalized word is different from that of " + baseWord
+                    + ": " + inputs[i], baseCollationKey, normalizedInputs.get(i));
         }
     }
 
@@ -53,10 +52,9 @@ public class WordExtractorTest {
     }
 
     @Test
-    public void getCollationKeysTest() {
-        assertCollationKey("aeiou", "aeiou", "àeiòu", "àéÌOù", "AÉIOU");
-        assertCollationKey("sS",    "ss", "ß");
-        assertCollationKey("ßèç",   "ssec", "Sseç", "sSèc", "SSèç", "sséc", "sSéç", "ßec", "ßeç", "ßèc", "ßèç", "ßéc", "ßéç");
+    public void normalizeTest() {
+        assertNormalized("aeiou", "aeiou", "àeiòu", "àéìoù", "aéiou");
+        assertNormalized("ssèç",   "ssec", "sseç", "ssèc", "ssèç", "sséc", "sséç");
     }
 
     @Test
