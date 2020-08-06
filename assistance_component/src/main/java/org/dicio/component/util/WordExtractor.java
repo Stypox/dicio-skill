@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 public class WordExtractor {
 
+    private static final Pattern wordSplitter = Pattern.compile("[^\\p{L}]+");
     private static final Pattern diacriticalMarksRemover =
             Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
 
@@ -28,7 +29,7 @@ public class WordExtractor {
      */
     public static List<String> extractWords(final String input) {
         // match all non-letter characters
-        final String[] splitInput = input.split("[^\\p{L}]+");
+        final String[] splitInput = wordSplitter.split(input);
 
         final List<String> inputWords = new ArrayList<>();
         for(final String word : splitInput) {
