@@ -1,20 +1,19 @@
 package org.dicio.skill.standard;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.dicio.skill.chain.InputRecognizer;
 import org.dicio.skill.standard.word.CapturingGroup;
 import org.dicio.skill.standard.word.DiacriticsInsensitiveWord;
 import org.dicio.skill.standard.word.DiacriticsSensitiveWord;
 import org.dicio.skill.util.WordExtractor;
-
 import org.junit.Test;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class StandardRecognizerTest {
 

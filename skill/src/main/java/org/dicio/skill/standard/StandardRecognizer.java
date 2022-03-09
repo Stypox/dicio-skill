@@ -5,7 +5,7 @@ import org.dicio.skill.chain.InputRecognizer;
 import java.util.Collections;
 import java.util.List;
 
-public class StandardRecognizer implements InputRecognizer<StandardResult> {
+public class StandardRecognizer extends InputRecognizer<StandardResult> {
     private final StandardRecognizerData data;
     private String input;
     private List<String> inputWords;
