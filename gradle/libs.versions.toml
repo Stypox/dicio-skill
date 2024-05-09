@@ -3,15 +3,17 @@ appcompat = "1.6.1"
 coreKtx = "1.13.1"
 dicioNumbers = "dummy-2"
 gradle = "8.4.0"
-junit = "4.13.2"
+kotest = "5.8.1"
 kotlin = "1.9.24"
 
 
 [libraries]
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 dicio-numbers = { module = "com.github.Stypox:dicio-numbers", version.ref = "dicioNumbers" }
-androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
-junit = { module = "junit:junit", version.ref = "junit" }
+kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
+kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
 
 [plugins]
 com-android-library = { id = "com.android.library", version.ref = "gradle" }
