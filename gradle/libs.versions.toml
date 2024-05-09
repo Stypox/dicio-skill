@@ -6,6 +6,7 @@ dicioNumbers = "dummy-2"
 gradle = "8.4.0"
 kotest = "5.8.1"
 kotlin = "1.9.23"
+composeKotlinCompilerExtension = "1.5.13"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
