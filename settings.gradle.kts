@@ -1,8 +1,18 @@
+import me.champeau.gradle.igp.gitRepositories
+
+include(":skill")
+
 pluginManagement {
     repositories {
         google()
         mavenCentral()
+        gradlePluginPortal()
     }
+}
+
+plugins {
+    // not using version catalog because it is not available in settings.gradle.kts
+    id("me.champeau.includegit") version "0.1.6"
 }
 
 dependencyResolutionManagement {
@@ -10,19 +20,19 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = java.net.URI("https://jitpack.io") }
     }
 }
 
-include(":skill")
-
-// Uncomment these lines to use a local copy of the projects, instead of letting Gradle fetch them
-// from Jitpack. You may want to change the paths in `includeBuild()` if you don't have those
-// projects in the same folder as this project.
-/*
-includeBuild("../dicio-numbers") {
-    dependencySubstitution {
-        substitute(module("com.github.Stypox:dicio-numbers")).using(project(":numbers"))
+gitRepositories {
+    include("dicio-numbers") {
+        uri.set("https://github.com/Stypox/dicio-numbers")
+        tag.set("dummy-3")
+        autoInclude.set(false)
+        includeBuild("") {
+            dependencySubstitution {
+                substitute(module("git.included.build:dicio-numbers"))
+                    .using(project(":numbers"))
+            }
+        }
     }
 }
-/**/
