@@ -1,7 +1,5 @@
 [versions]
-appcompat = "1.6.1"
 composeBom = "2024.05.00"
-coreKtx = "1.13.1"
 dicioNumbers = "dummy-2"
 gradle = "8.4.0"
 kotest = "5.8.1"
@@ -9,19 +7,12 @@ kotlin = "1.9.23"
 composeKotlinCompilerExtension = "1.5.13"
 
 [libraries]
-androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
-androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 compose-ui = { module = "androidx.compose.ui:ui" }
-compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
-debug-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
-debug-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 dicio-numbers = { module = "com.github.Stypox:dicio-numbers", version.ref = "dicioNumbers" }
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
-test-android-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 
 [plugins]
 com-android-library = { id = "com.android.library", version.ref = "gradle" }
