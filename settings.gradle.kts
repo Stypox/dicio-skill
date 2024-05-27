@@ -43,24 +43,10 @@ if (localProperties.getOrDefault("useLocalDicioLibraries", "") == "true") {
     }
 
 } else {
-    // if the repo has already been cloned, the gitRepositories plugin is buggy and doesn't
-    // fetch the remote repo before trying to checkout the commit (in case the commit has changed),
-    // so we need to do it manually
-    val file = File("$rootDir/checkouts/dicio-numbers")
-    if (file.isDirectory) {
-        Git.open(file).fetch().call()
-    }
-
     gitRepositories {
         include("dicio-numbers") {
             uri.set("https://github.com/Stypox/dicio-numbers")
-            // use the dummy version, except when specified differently in local.properties
-            val overrideCommit = localProperties.getOrDefault("dicioNumbersCommit", "").toString()
-            if (overrideCommit.isBlank()) {
-                tag.set("dummy-3")
-            } else {
-                commit.set(overrideCommit)
-            }
+            tag.set("dummy-3")
             autoInclude.set(false)
             includeBuild("") {
                 dependencySubstitution {
